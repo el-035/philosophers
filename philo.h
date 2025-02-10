@@ -6,7 +6,7 @@
 #include<string.h>
 #include<unistd.h>
 #include<stdio.h>
-//#include
+#include<pthread.h>
 
 
 //structs
@@ -25,6 +25,7 @@ typedef struct	s_data
 //libft
 int	ft_atoi(const char *str, t_data **data);
 size_t	ft_strlen(const char *str);
+
 //free &error
-void	error(char *msg, t_data **data);
+void	errors(char *msg, t_data **data);
 #endif

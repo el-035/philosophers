@@ -1,6 +1,6 @@
 #include "philo.h"
 
-int	ft_atoi(const char *str, t_data **data)	//needs to free data if error
+int	ft_atoi(const char *str, t_data **data)
 {
 	int	i;
 	int	result;
@@ -12,7 +12,7 @@ int	ft_atoi(const char *str, t_data **data)	//needs to free data if error
 	if (str[i] == '-' || str[i] == '+')
 	{
 		if (str[i] == '-')
-			return (error("Negative input\n", data), 0);
+			return (errors("Negative input\n", data), 0);
 		i++;
 	}
 	if (str[i])

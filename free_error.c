@@ -1,6 +1,6 @@
 #include "philo.h"
 
-void	error(char *msg, t_data **data)
+void	errors(char *msg, t_data **data)
 {
 	write(2, "Error\n", 6);
 	if (*data && data)
