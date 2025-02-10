@@ -1,11 +1,11 @@
 CC = cc
 
-CFILES = philo.c ft_libft.c 
+CFILES = philo.c ft_libft.c free_error.c
 
 #creates object files from the c files given
 OFILES = $(CFILES:.c=.o)
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 
 NAME = philo
 
@@ -22,12 +22,10 @@ $(NAME): $(OFILES)
 #gets rid of all o files after creating application
 clean:
 	rm -f $(OFILES)
-	$(MAKE) clean
 
 #removes o files and library
 fclean: clean
 	rm -f $(NAME)
-	$(MAKE) clean
 
 #to rebuild the whole project after cleaning everything
 re: fclean all

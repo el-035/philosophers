@@ -23,6 +23,8 @@ typedef struct	s_data
 //philo
 
 //libft
-int	ft_atoi(const char *str);
-
+int	ft_atoi(const char *str, t_data **data);
+size_t	ft_strlen(const char *str);
+//free &error
+void	error(char *msg, t_data **data);
 #endif
