@@ -12,15 +12,25 @@
 //structs
 typedef struct	s_data
 {
-	int n_phils;
-	int t_die;
+	int	philo;		//number of philosopher
+	pthread_t thread_id;
+	int n_phils;	//tot phil number
+	int t_die;	
 	int t_eat;
-	int t_sleep; 
-	int n_food;
+	int t_sleep;
+	int n_meals;
+	pthread_t	*left_fork;
+	pthread_t right_fork;
+	struct s_data		*next;
 }				t_data;
+
+
 
 //prototypes
 //philo
+void *life_cycle(void *arg);
+t_data	*create_philosophers(char **args);
+void	initialise_data(char **args, int i, t_data **phil);
 
 //libft
 int	ft_atoi(const char *str, t_data **data);
