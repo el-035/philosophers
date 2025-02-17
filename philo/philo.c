@@ -5,7 +5,14 @@ void *life_cycle(void *arg)
 	t_data			*phil;
 
 	phil = (t_data *) arg;
-	printf("%ld %d is taking a shit\n", return_time(), phil->philo);
+	printf("%ld %d has taken a fork\n", return_time(), phil->philo);
+	printf("%ld %d is eating\n", return_time(), phil->philo);
+	usleep(phil->t_eat * 1000);
+	printf("%ld %d is sleeping\n", return_time(), phil->philo);
+	usleep(phil->t_sleep * 1000);
+	printf("%ld %d is thinking\n", return_time(), phil->philo);
+	printf("%ld %d died\n", return_time(), phil->philo);
+	
 	return (NULL);
 }
 
