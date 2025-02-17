@@ -7,7 +7,7 @@
 #include<unistd.h>
 #include<stdio.h>
 #include<pthread.h>
-
+#include<sys/time.h>
 
 //structs
 typedef struct	s_data
@@ -38,4 +38,7 @@ size_t	ft_strlen(const char *str);
 
 //free &error
 void	errors(char *msg, t_data **data);
+
+//utils
+long	return_time();
 #endif

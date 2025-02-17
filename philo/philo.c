@@ -1,14 +1,11 @@
 #include "philo.h"
+
 void *life_cycle(void *arg)
 {
-	t_data	*phil;
-	int i = 0;
+	t_data			*phil;
 
 	phil = (t_data *) arg;
-	while (phil->n_meals && i++ < phil->n_meals)
-		printf("philosopher %d is taking a shit\n", phil->philo);
-/* 	printf("philosopher %d exists, or does it?\n", phil->philo);
-	printf("philosopher %d is thinking\n", phil->philo); */
+	printf("%ld %d is taking a shit\n", return_time(), phil->philo);
 	return (NULL);
 }
 
@@ -27,21 +24,20 @@ t_data	*create_philosophers(char **args)
 		if (!new)
 			errors("Allocation failed\n", &first);	//here everything need to be freed
 		memset(new, 0, sizeof(t_data));
-		initialise_data(args, i, &new);
+		initialise_data(args, i++, &new);
 		if (pthread_create(&new->thread_id, NULL, life_cycle, new) != 0)
 			printf("Error thread\n");	//error handling
-		printf("created philo %d\n", new->philo);
 		if (!first)
 			first = new;
 		else
 			prev->next = new;
 		prev = new;
-		i++;
 	}
 	if (prev)
 		prev->next = first;
 	return (first);
 }
+
 void	initialise_data(char **args, int i, t_data **phil)
 {
 	(*phil)->philo = i + 1;
@@ -72,5 +68,6 @@ int main(int argc, char **argv)
 		pthread_join(temp->thread_id, NULL);
 		temp = temp->next;
 	}
-
+	//while (1)
+	//printf("%ld\n", (time.tv_usec / 1000));
 }
