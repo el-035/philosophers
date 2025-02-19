@@ -12,15 +12,17 @@
 // structs
 typedef struct s_data
 {
-	int philo; // number of philosopher
+	int 			philo; // number of philosopher
 	pthread_t		thread_id;
-	int n_phils; // tot phil number
-	int				t_die;
-	int				t_eat;
-	int				t_sleep;
+	int 			n_phils; // tot phil number
+	long			t_die;
+	long			t_eat;
+	long			t_sleep;
 	int				n_meals;
-	pthread_t		*left_fork;
-	pthread_t		right_fork;
+	int				meals_eaten;
+	int				last_meal;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	right_fork;
 	struct s_data	*next;
 }					t_data;
 
@@ -38,5 +40,8 @@ size_t				ft_strlen(const char *str);
 void				errors(char *msg, t_data **data);
 
 // utils
-long				return_time(void);
+long				return_time(int start);
+int					is_ready(t_data *phil);
+void					full_or_dead(t_data *phil);
+
 #endif
