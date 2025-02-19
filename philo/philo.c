@@ -1,13 +1,11 @@
 #include "philo.h"
 
-int	eat(t_data *phil)
+void	eat(t_data *phil)
 {
-	int	last_meal;
-
 	full_or_dead(phil);
 	pthread_mutex_lock(&phil->right_fork);
 	pthread_mutex_lock(phil->left_fork);
-	last_meal = return_time(0);
+	phil->last_meal = return_time(0);
 	//full_or_dead(phil);
 	printf("%ld %d has taken a fork\n", return_time(0), phil->philo);
 	printf("%ld %d is eating\n", return_time(0), phil->philo);
@@ -18,7 +16,6 @@ int	eat(t_data *phil)
 	pthread_mutex_unlock(&phil->right_fork);
 	pthread_mutex_unlock(phil->left_fork);
 	full_or_dead(phil);
-	return(last_meal);
 }
 
 void *life_cycle(void *arg)
@@ -31,7 +28,7 @@ void *life_cycle(void *arg)
 	phil->last_meal = return_time(1);
 	while (1)
 	{
-		phil->last_meal = eat(phil);
+		eat(phil);
 		printf("%ld %d is sleeping\n", return_time(0), phil->philo);
 		full_or_dead(phil);
 		usleep(phil->t_sleep * 1000);

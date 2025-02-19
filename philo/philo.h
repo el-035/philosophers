@@ -42,6 +42,6 @@ void				errors(char *msg, t_data **data);
 // utils
 long				return_time(int start);
 int					is_ready(t_data *phil);
-void					full_or_dead(t_data *phil);
+void				full_or_dead(t_data *phil);
 
 #endif
