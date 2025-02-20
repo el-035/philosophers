@@ -14,6 +14,7 @@ typedef struct s_data
 {
 	int 			philo; // number of philosopher
 	pthread_t		thread_id;
+	pthread_t		monitor_id;
 	int 			n_phils; // tot phil number
 	long			t_die;
 	long			t_eat;
@@ -42,6 +43,8 @@ void				errors(char *msg, t_data **data);
 // utils
 long				return_time(int start);
 int					is_ready(t_data *phil);
-void				full_or_dead(t_data *phil);
+void				*full_or_dead(void *arg);
+void	init_monitoring(t_data *phil);
+int	monitor_ready(t_data *phil);
 
 #endif
