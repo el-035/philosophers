@@ -29,22 +29,29 @@ typedef struct s_data
 
 // prototypes
 // philo
-void				*life_cycle(void *arg);
 t_data				*create_philosophers(char **args);
 void				initialise_data(char **args, int i, t_data **phil);
 
+//routine
+void				*life_cycle(void *arg);
+void				eat(t_data *phil);
+
 // libft
-int					ft_atoi(const char *str, t_data **data);
+int					ft_atoi(const char *str);
 size_t				ft_strlen(const char *str);
 
 // free &error
-void				errors(char *msg, t_data **data);
+//void				errors(char *msg, t_data **data);
+void	destroy_everything(t_data *phil);
+void	destroy_list(t_data *phil);
+void	destroy_monitor(t_data *phil);
+void	destroy_threads(t_data *phil);
 
 // utils
 long				return_time(int start);
 int					is_ready(t_data *phil);
 void				*full_or_dead(void *arg);
-void	init_monitoring(t_data *phil);
-int	monitor_ready(t_data *phil);
+int				init_monitoring(t_data *phil);
+int					monitor_ready(t_data *phil);
 
 #endif

@@ -1,13 +1,60 @@
 #include "philo.h"
 
-void	errors(char *msg, t_data **data)
+void	destroy_everything(t_data *phil)
 {
-	write(2, "Error\n", 6);
-	if (*data && data)
+	destroy_monitor(phil);
+	destroy_threads(phil);
+	destroy_list(phil);
+}
+
+void	destroy_monitor(t_data *phil)
+{
+	if (!phil)
+		return ;
+	if (phil->monitor_id != 0)
 	{
-		free (*data);
-		data = NULL;
+		if (pthread_detach(phil->monitor_id) != 0)
+			printf("Error\n");
+		phil->monitor_id = 0;
 	}
-	write(2, msg, ft_strlen(msg));
-	exit(1);
+}
+
+void	destroy_threads(t_data *phil)
+{
+	t_data *cur;
+	int		i;
+
+	i = 0;
+	cur = phil;
+	if (!phil)
+		return ;
+	while (i < phil->n_phils)
+	{
+		if (cur->thread_id != 0)
+		{
+			if (pthread_detach(cur->thread_id) != 0)
+				printf("Error\n");
+			cur->thread_id = 0;
+		}
+		if (pthread_mutex_destroy(&cur->right_fork) != 0)
+			printf("Error\n");
+		cur = cur->next;
+		i++;
+	}
+}
+	
+void	destroy_list(t_data *phil)
+{
+	t_data *cur;
+	t_data *prev;
+
+	if (!phil)
+		return ;
+	cur = phil;
+	while (cur)
+	{
+		prev = cur;
+		cur = cur->next;
+		free(prev);
+	}
 }

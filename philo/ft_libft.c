@@ -1,6 +1,6 @@
 #include "philo.h"
 
-int	ft_atoi(const char *str, t_data **data)
+int	ft_atoi(const char *str)
 {
 	int	i;
 	int	result;
@@ -12,7 +12,7 @@ int	ft_atoi(const char *str, t_data **data)
 	if (str[i] == '-' || str[i] == '+')
 	{
 		if (str[i] == '-')
-			return (errors("Invalid input\n", data), 0);
+			return (-1);
 		i++;
 	}
 	if (str[i])
@@ -21,7 +21,7 @@ int	ft_atoi(const char *str, t_data **data)
 			result = result * 10 + str[i++] - 48;
 	}
 	if (result == 0)
-		return (errors("Invalid input\n", data), 0);
+		return (-1);
 	return (result);
 }
 

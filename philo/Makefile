@@ -1,6 +1,6 @@
 CC = cc
 
-CFILES = philo.c ft_libft.c free_error.c utils.c
+CFILES = philo.c ft_libft.c free_error.c utils.c routine.c
 
 #creates object files from the c files given
 OFILES = $(CFILES:.c=.o)
