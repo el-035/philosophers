@@ -1,24 +1,27 @@
 #include "philo.h"
 
-void	eat(t_data *phil)
+void	eat(t_data *phil)	//avoid deadlocks
 {
-	pthread_mutex_lock(&phil->right_fork);
-	pthread_mutex_lock(phil->left_fork);
+	if(pthread_mutex_lock(&phil->right_fork) != 0)
+		return (printf("Error\n"), destroy_everything(phil));
+	if(pthread_mutex_lock(phil->left_fork)!= 0)
+		return (printf("Error\n"), destroy_everything(phil));
 	phil->last_meal = return_time(0);
 	printf("%ld %d has taken a fork\n", return_time(0), phil->philo);
 	printf("%ld %d is eating\n", return_time(0), phil->philo);
 	usleep(phil->t_eat * 1000);
 	phil->meals_eaten++;
-	pthread_mutex_unlock(&phil->right_fork);
-	pthread_mutex_unlock(phil->left_fork);
+	if(pthread_mutex_unlock(&phil->right_fork) != 0)
+		return (printf("Error\n"), destroy_everything(phil));
+	if(pthread_mutex_unlock(phil->left_fork) != 0)
+		return (printf("Error\n"), destroy_everything(phil));
 }
 
-void *life_cycle(void *arg)
+void *life_cycle(void *arg)	//ok
 {
 	t_data	*phil;
 
 	phil = (t_data *) arg;
-	//usleep(50);
 	while (is_ready(phil) == 0)
 		;
 	phil->last_meal = return_time(1);
@@ -34,7 +37,7 @@ void *life_cycle(void *arg)
 	return (NULL);
 }
 
-int	init_monitoring(t_data *phil)
+int	init_monitoring(t_data *phil)	//ok
 {
 	t_data	*cur;
 
@@ -58,7 +61,6 @@ void	*full_or_dead(void *arg)
 	int		death;
 
 	phil = (t_data *) arg;
-	//usleep(50);
 	while (is_ready(phil) == 0)
 		;
 	while (1)
@@ -81,6 +83,6 @@ void	*full_or_dead(void *arg)
 			i++;
 		}
 		if (death == 1 || full_belly == phil->n_phils)
-			exit(1);	//fix here
+			break ;	//fix here
 	}
 }

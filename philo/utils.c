@@ -1,6 +1,6 @@
 #include "philo.h"
 
-long	return_time(int flag)
+long	return_time(int flag)	//ok
 {
 	struct timeval	time;
 	static long		start;
@@ -8,15 +8,15 @@ long	return_time(int flag)
 	if (flag == 1)
 	{
 		if (gettimeofday(&time, NULL) != 0)
-			return (-1);
+			return (0);
 		start = time.tv_sec * 1000 + time.tv_usec / 1000;
 	}
 	if (gettimeofday(&time, NULL) != 0)
-		return (-1);
+		return (0);
 	return (time.tv_sec * 1000 + time.tv_usec / 1000 - start);
 }
 
-int	monitor_ready(t_data *phil)
+int	monitor_ready(t_data *phil)	//ok
 {
 	t_data	*cur;
 	int		i;
@@ -33,7 +33,7 @@ int	monitor_ready(t_data *phil)
 	return (1);
 }
 
-int	is_ready(t_data *phil)
+int	is_ready(t_data *phil)	//OK
 {
 	t_data	*start;
 	int		ready;

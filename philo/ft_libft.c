@@ -1,6 +1,6 @@
 #include "philo.h"
 
-int	ft_atoi(const char *str)
+int	ft_atoi(const char *str) //ok
 {
 	int	i;
 	int	result;
@@ -25,7 +25,7 @@ int	ft_atoi(const char *str)
 	return (result);
 }
 
-size_t	ft_strlen(const char *str)
+size_t	ft_strlen(const char *str) //OK
 {
 	size_t i;
 

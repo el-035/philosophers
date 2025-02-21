@@ -1,6 +1,6 @@
 #include "philo.h"
 
-t_data	*create_philosophers(char **args)
+t_data	*create_philosophers(char **args)	//ok
 {
 	t_data	*first;
 	t_data	*prev;
@@ -34,7 +34,7 @@ t_data	*create_philosophers(char **args)
 	return (first);
 }
 
-void	initialise_data(char **args, int i, t_data **phil)
+void	initialise_data(char **args, int i, t_data **phil)	//ok
 {
 	memset(*phil, 0, sizeof(t_data));
 	(*phil)->philo = i + 1;
@@ -48,7 +48,7 @@ void	initialise_data(char **args, int i, t_data **phil)
 		(*phil)->n_meals = -1;
 }
 
-int	check_input(char **args)
+int	check_input(char **args)	//OK
 {
 	if(ft_atoi(args[1]) == -1)
 		return (-1);
@@ -74,7 +74,7 @@ int main(int argc, char **argv)	//remove all exits
 	t_data	*temp;
 	int		tot;
 
-	if (argc < 5 || argc > 6)	//seg fault
+	if (argc < 5 || argc > 6)
 		return(printf("Error\nInvalid input\n"), -1);
 	if(check_input(argv) == -1)
 		return(printf("Error\nInvalid input\n"), -1);
@@ -87,12 +87,12 @@ int main(int argc, char **argv)	//remove all exits
 		return (printf("Error thread\n"), -1);
 	if (pthread_join(philo->monitor_id, NULL) != 0)
 		return (printf("Error\n"), destroy_everything(philo), -1);
-	while (tot-- > 0)	//check that they worked
+	while (tot-- > 0)
 	{
 		if (pthread_join(temp->thread_id, NULL) != 0)
-		return (printf("Error\n"), destroy_everything(philo), -1);
+			return (printf("Error\n"), destroy_everything(philo), -1);
 		if (pthread_mutex_init(&temp->right_fork, NULL) != 0)
-		return (printf("Error\n"), destroy_everything(philo), -1);
+			return (printf("Error\n"), destroy_everything(philo), -1);
 		temp = temp->next;
 	}
 	destroy_everything(philo);
