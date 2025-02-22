@@ -53,9 +53,7 @@ int	is_ready(t_data *phil)	//OK
 			break ;
 	}
 	monitor = monitor_ready(phil);
-	if (count != 0)
-		ready = 0;
-	if (monitor == 0)
+	if (count != 0 || monitor != 0)
 		ready = 0;
 	return (ready);
 }

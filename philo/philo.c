@@ -1,6 +1,6 @@
 #include "philo.h"
 
-t_data	*create_philosophers(char **args)	//ok
+t_data	*create_philosophers(char **args, int end)	//ok
 {
 	t_data	*first;
 	t_data	*prev;
@@ -15,6 +15,7 @@ t_data	*create_philosophers(char **args)	//ok
 		if (!cur)
 			return (destroy_everything(cur), NULL);
 		initialise_data(args, i++, &cur);
+		cur->its_over = &end;
 		if (pthread_create(&cur->thread_id, NULL, life_cycle, cur) != 0)
 			return (destroy_everything(cur), NULL);
 		if (!first)
@@ -66,35 +67,36 @@ int	check_input(char **args)	//OK
 	return (0);
 }
 
-//check life cycle and full or dead for errors
-
-int main(int argc, char **argv)	//remove all exits
+int main(int argc, char **argv)	//check life cycle and full or dead for errors
 {
 	t_data	*philo;
 	t_data	*temp;
 	int		tot;
+	int		end;
 
 	if (argc < 5 || argc > 6)
 		return(printf("Error\nInvalid input\n"), -1);
 	if(check_input(argv) == -1)
 		return(printf("Error\nInvalid input\n"), -1);
+	end = 0;
 	tot = ft_atoi(argv[1]);
-	philo = create_philosophers(argv);
+	philo = create_philosophers(argv, end);
 	if (!philo)
-		return(printf("Error\n"), -1);
+		return(printf("Error creating philosophers\n"), -1);
 	temp = philo;
 	if (init_monitoring(philo) == -1)
-		return (printf("Error thread\n"), -1);
+		return (printf("Error thread\n"), destroy_everything(philo), -1);
+		
 	if (pthread_join(philo->monitor_id, NULL) != 0)
-		return (printf("Error\n"), destroy_everything(philo), -1);
+		return (printf("Error joining thread\n"), destroy_everything(philo), -1);
 	while (tot-- > 0)
 	{
 		if (pthread_join(temp->thread_id, NULL) != 0)
-			return (printf("Error\n"), destroy_everything(philo), -1);
+			return (printf("Error joining thread\n"), destroy_everything(philo), -1);
 		if (pthread_mutex_init(&temp->right_fork, NULL) != 0)
-			return (printf("Error\n"), destroy_everything(philo), -1);
+			return (printf("Error initialising mutex\n"), destroy_everything(philo), -1);
 		temp = temp->next;
 	}
-	destroy_everything(philo);
+	//destroy_everything(philo);
 	return (0);
 }

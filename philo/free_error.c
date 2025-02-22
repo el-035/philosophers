@@ -14,7 +14,7 @@ void	destroy_monitor(t_data *phil)
 	if (phil->monitor_id != 0)
 	{
 		if (pthread_detach(phil->monitor_id) != 0)
-			printf("Error\n");
+			printf("Error detaching thread\n");
 		phil->monitor_id = 0;
 	}
 }
@@ -33,11 +33,11 @@ void	destroy_threads(t_data *phil)
 		if (cur->thread_id != 0)
 		{
 			if (pthread_detach(cur->thread_id) != 0)
-				printf("Error\n");
+				printf("Error detaching thread\n");
 			cur->thread_id = 0;
 		}
 		if (pthread_mutex_destroy(&cur->right_fork) != 0)
-			printf("Error\n");
+			printf("Error destroying mutex\n");
 		cur = cur->next;
 		i++;
 	}
