@@ -35,25 +35,23 @@ int	monitor_ready(t_data *phil)	//ok
 
 int	is_ready(t_data *phil)	//OK
 {
-	t_data	*start;
-	int		ready;
+	t_data	*cur;
 	int		count;
-	int		monitor;
 
 	count = phil->n_phils;
-	ready = 1;
-	start = phil;
-	while (start->next != NULL)
+	cur = phil;
+	while (count > 0)
 	{
-		if (start->thread_id == 0)
-			ready = 0;
-		start = start->next;
+		if (cur->thread_id == 0)
+			return (0);
+		if (!cur->next && phil->n_phils != 1)
+			return (0);
+		cur = cur->next;
 		count--;
-		if (start == phil)
-			break ;
 	}
-	monitor = monitor_ready(phil);
-	if (count != 0 || monitor != 0)
-		ready = 0;
-	return (ready);
+	if (monitor_ready(phil) == 0)
+		return (0);
+	return_time(1);
+	return (1);
 }
+

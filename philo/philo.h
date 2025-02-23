@@ -15,7 +15,7 @@ typedef struct s_data
 	int 			philo; // number of philosopher
 	pthread_t		thread_id;
 	pthread_t		monitor_id;
-	int				*its_over;
+	_Atomic int				*its_over;
 	int 			n_phils; // tot phil number
 	long			t_die;
 	long			t_eat;
@@ -30,7 +30,7 @@ typedef struct s_data
 
 // prototypes
 // philo
-t_data				*create_philosophers(char **args, int end);
+t_data				*create_philosophers(char **args);
 void				initialise_data(char **args, int i, t_data **phil);
 
 //routine

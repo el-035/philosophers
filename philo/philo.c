@@ -1,11 +1,12 @@
 #include "philo.h"
 
-t_data	*create_philosophers(char **args, int end)	//ok
+t_data	*create_philosophers(char **args)	//ok
 {
 	t_data	*first;
 	t_data	*prev;
 	t_data	*cur;
 	int		i;
+	_Atomic int		end = 0;
 
 	i = 0;
 	first = NULL;
@@ -18,6 +19,8 @@ t_data	*create_philosophers(char **args, int end)	//ok
 		cur->its_over = &end;
 		if (pthread_create(&cur->thread_id, NULL, life_cycle, cur) != 0)
 			return (destroy_everything(cur), NULL);
+		if (cur->n_phils == 1)
+			return (cur);
 		if (!first)
 			first = cur;
 		else
@@ -72,15 +75,15 @@ int main(int argc, char **argv)	//check life cycle and full or dead for errors
 	t_data	*philo;
 	t_data	*temp;
 	int		tot;
-	int		end;
 
 	if (argc < 5 || argc > 6)
 		return(printf("Error\nInvalid input\n"), -1);
 	if(check_input(argv) == -1)
 		return(printf("Error\nInvalid input\n"), -1);
-	end = 0;
 	tot = ft_atoi(argv[1]);
-	philo = create_philosophers(argv, end);
+	if (tot == 1)
+		return(printf("0 1 has died\n"));
+	philo = create_philosophers(argv);
 	if (!philo)
 		return(printf("Error creating philosophers\n"), -1);
 	temp = philo;
