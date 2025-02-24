@@ -3,7 +3,8 @@
 long	return_time(int flag)	//ok
 {
 	struct timeval	time;
-	static long		start;
+	_Atomic static long		start;
+	_Atomic long	res;
 
 	if (flag == 1)
 	{
@@ -13,7 +14,8 @@ long	return_time(int flag)	//ok
 	}
 	if (gettimeofday(&time, NULL) != 0)
 		return (0);
-	return (time.tv_sec * 1000 + time.tv_usec / 1000 - start);
+	res = time.tv_sec * 1000 + time.tv_usec / 1000 - start;
+	return (res);
 }
 
 int	monitor_ready(t_data *phil)	//ok
@@ -55,3 +57,38 @@ int	is_ready(t_data *phil)	//OK
 	return (1);
 }
 
+void	lock(t_data *phil)
+{
+	if (phil->left_fork < &phil->right_fork)
+	{
+		if(pthread_mutex_lock(phil->left_fork)!= 0)
+			return (printf("Error locking mutex\n"), destroy_everything(phil));
+		if(pthread_mutex_lock(&phil->right_fork) != 0)
+			return (printf("Error locking mutex\n"), destroy_everything(phil));
+	}
+	else
+	{
+		if(pthread_mutex_lock(&phil->right_fork) != 0)
+			return (printf("Error locking mutex\n"), destroy_everything(phil));
+		if(pthread_mutex_lock(phil->left_fork)!= 0)
+			return (printf("Error locking mutex\n"), destroy_everything(phil));
+	}
+}
+
+void	unlock(t_data *phil)
+{
+	if (phil->left_fork < &phil->right_fork)
+	{
+		if(pthread_mutex_unlock(phil->left_fork) != 0)
+			return (printf("Error unlocking mutex\n"), destroy_everything(phil));
+		if(pthread_mutex_unlock(&phil->right_fork) != 0)
+			return (printf("Error unlocking mutex\n"), destroy_everything(phil));
+	}
+	else
+	{
+		if(pthread_mutex_unlock(&phil->right_fork) != 0)
+			return (printf("Error unlocking mutex\n"), destroy_everything(phil));
+		if(pthread_mutex_unlock(phil->left_fork) != 0)
+			return (printf("Error unlocking mutex\n"), destroy_everything(phil));
+	}
+}

@@ -81,7 +81,7 @@ int main(int argc, char **argv)	//check life cycle and full or dead for errors
 	if(check_input(argv) == -1)
 		return(printf("Error\nInvalid input\n"), -1);
 	tot = ft_atoi(argv[1]);
-	if (tot == 1)
+	if (tot == 1)	//mmh
 		return(printf("0 1 has died\n"));
 	philo = create_philosophers(argv);
 	if (!philo)

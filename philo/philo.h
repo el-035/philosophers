@@ -54,5 +54,7 @@ int					is_ready(t_data *phil);
 void				*full_or_dead(void *arg);
 int				init_monitoring(t_data *phil);
 int					monitor_ready(t_data *phil);
+void	unlock(t_data *phil);
+void	lock(t_data *phil);
 
 #endif

@@ -2,13 +2,7 @@
 
 void	eat(t_data *phil)	//avoid deadlocks
 {
-	if(pthread_mutex_lock(&phil->right_fork) != 0)
-		return (printf("Error locking mutex\n"), destroy_everything(phil));
-	if (phil->left_fork != NULL)
-	{
-		if(pthread_mutex_lock(phil->left_fork)!= 0)
-			return (printf("Error locking mutex\n"), destroy_everything(phil));
-	}
+	lock(phil);
 	if(*(phil->its_over) != 1)
 	{
 		printf("%ld %d has taken a fork\n", return_time(0), phil->philo);
@@ -17,13 +11,7 @@ void	eat(t_data *phil)	//avoid deadlocks
 		usleep(phil->t_eat * 1000);
 		phil->meals_eaten++;
 	}
-	if(pthread_mutex_unlock(&phil->right_fork) != 0)
-		return (printf("Error unlocking mutex\n"), destroy_everything(phil));
-	if (phil->left_fork != NULL)
-	{
-		if(pthread_mutex_unlock(phil->left_fork) != 0)
-			return (printf("Error unlocking mutex\n"), destroy_everything(phil));
-	}
+	unlock(phil);
 }
 
 void *life_cycle(void *arg)	//ok
@@ -57,11 +45,10 @@ int	init_monitoring(t_data *phil)	//ok
 {
 	t_data	*cur;
 
-	
 	if (pthread_create(&phil->monitor_id, NULL, full_or_dead, phil) != 0)
 		return (-1);
-	if (!phil->next)
-		return (0);
+/* 	if (!phil->next)
+		return (0); */
 	cur = phil->next;
 	while (cur != phil)
 	{
