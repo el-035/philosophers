@@ -12,32 +12,37 @@
 // structs
 typedef struct s_data
 {
-	int 			philo; // number of philosopher
-	pthread_t		thread_id;
 	pthread_t		monitor_id;
-	_Atomic int		*its_over;
+	int				its_over;
 	int 			n_phils; // tot phil number
 	long			t_die;
 	long			t_eat;
 	long			t_sleep;
 	int				n_meals;
+	pthread_mutex_t	message;
+	pthread_mutex_t	threads;
+}					t_data;
+
+typedef struct s_philo
+{
+	int 			philo; // number of philosopher
+	pthread_t		thread_id;
 	int				meals_eaten;
 	int				last_meal;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	right_fork;
-	pthread_mutex_t	message;
-	pthread_mutex_t	threads;
-	struct s_data	*next;
-}					t_data;
+	struct s_data	*data;
+	struct s_philo	*next;
+}				t_philo;
 
 // prototypes
 // philo
-t_data				*create_philosophers(char **args);
-void				initialise_data(char **args, int i, t_data **phil);
+t_philo	*create_philos(char **args);
+void				initialise_data(char **args, t_data **data);
 
 //routine
 void				*life_cycle(void *arg);
-void				eat(t_data *phil);
+void				eat(t_philo *phil);
 
 // libft
 int					ft_atoi(const char *str);
@@ -46,20 +51,18 @@ void	*die_alone(void *arg);
 int		lonely_philo(char **args);
 
 // free &error
-//void				errors(char *msg, t_data **data);
-void	destroy_everything(t_data *phil);
-void	destroy_list(t_data *phil);
-void	destroy_monitor(t_data *phil);
-void	destroy_threads(t_data *phil);
-void	destroy_lonely(t_data *phil);
+//void				errors(char *msg, t_philo **data);
+void	destroy_everything(t_philo *phil);
+void	destroy_list(t_philo *phil);
+
 
 // utils
 long				return_time(int start);
-int					is_ready(t_data *phil);
+int					is_ready(t_philo *phil);
 void				*full_or_dead(void *arg);
-int				init_monitoring(t_data *phil);
-int					monitor_ready(t_data *phil);
-void	unlock(t_data *phil);
-void	lock(t_data *phil);
+
+int					monitor_ready(t_philo *phil);
+void	unlock(t_philo *phil);
+void	lock(t_philo *phil);
 
 #endif

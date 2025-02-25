@@ -1,6 +1,6 @@
 #include "philo.h"
 
-long	return_time(int flag)	//ok
+long	return_time(int flag)
 {
 	struct timeval	time;
 	_Atomic static long		start;
@@ -18,16 +18,16 @@ long	return_time(int flag)	//ok
 	return (res);
 }
 
-int	monitor_ready(t_data *phil)	//ok
+int	monitor_ready(t_philo *phil)
 {
-	t_data	*cur;
+	t_philo	*cur;
 	int		i;
 
 	cur = phil;
 	i = 0;
-	while (i < phil->n_phils)
+	while (i < phil->data->n_phils)
 	{
-		if (cur->monitor_id == 0)
+		if (cur->data->monitor_id == 0)
 			return (0);
 		cur = cur->next;
 		i++;
@@ -35,18 +35,18 @@ int	monitor_ready(t_data *phil)	//ok
 	return (1);
 }
 
-int	is_ready(t_data *phil)	//OK
+int	is_ready(t_philo *phil)
 {
-	t_data	*cur;
+	t_philo	*cur;
 	int		count;
 
-	count = phil->n_phils;
+	count = phil->data->n_phils;
 	cur = phil;
 	while (count > 0)
 	{
 		if (cur->thread_id == 0)
 			return (0);
-		if (!cur->next && phil->n_phils != 1)
+		if (!cur->next && phil->data->n_phils != 1)
 			return (0);
 		cur = cur->next;
 		count--;
@@ -57,7 +57,7 @@ int	is_ready(t_data *phil)	//OK
 	return (1);
 }
 
-void	lock(t_data *phil)
+void	lock(t_philo *phil)
 {
 	if (phil->left_fork < &phil->right_fork)
 	{
@@ -75,7 +75,7 @@ void	lock(t_data *phil)
 	}
 }
 
-void	unlock(t_data *phil)
+void	unlock(t_philo *phil)
 {
 	if (phil->left_fork < &phil->right_fork)
 	{
