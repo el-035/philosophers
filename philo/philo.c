@@ -58,7 +58,9 @@ void	initialise_data(char **args, t_data **data)	//ok
 		(*data)->n_meals = -1;
 	if (pthread_mutex_init(&(*data)->message, NULL) != 0)
 			return (printf("Error initialising mutex\n"), destroy_everything(NULL));
-	if (pthread_mutex_init(&(*data)->threads, NULL) != 0)
+	if (pthread_mutex_init(&(*data)->time, NULL) != 0)
+		return (printf("Error initialising mutex\n"), destroy_everything(NULL));
+	if (pthread_mutex_init(&(*data)->end, NULL) != 0)
 		return (printf("Error initialising mutex\n"), destroy_everything(NULL));
 }
 
@@ -109,9 +111,10 @@ int main(int argc, char **argv)	//check life cycle and full or dead for errors
 	philo = create_philos(argv);
 	if (!philo)
 		return(printf("Error creating philosophers\n"), -1);
-	
 	if (pthread_create(&philo->data->monitor_id, NULL, full_or_dead, philo) != 0)	
 		return (printf("Error thread\n"), destroy_everything(philo), -1);
 	join_threads(philo);
+	free(philo->data);
+	//destroy_list(philo);
 	return (0);
 }

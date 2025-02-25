@@ -14,13 +14,15 @@ typedef struct s_data
 {
 	pthread_t		monitor_id;
 	int				its_over;
+	pthread_mutex_t	end;
 	int 			n_phils; // tot phil number
 	long			t_die;
 	long			t_eat;
 	long			t_sleep;
 	int				n_meals;
 	pthread_mutex_t	message;
-	pthread_mutex_t	threads;
+	long			start;
+	pthread_mutex_t	time;
 }					t_data;
 
 typedef struct s_philo
@@ -28,7 +30,7 @@ typedef struct s_philo
 	int 			philo; // number of philosopher
 	pthread_t		thread_id;
 	int				meals_eaten;
-	int				last_meal;
+	long			last_meal;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	right_fork;
 	struct s_data	*data;
@@ -57,12 +59,12 @@ void	destroy_list(t_philo *phil);
 
 
 // utils
-long				return_time(int start);
+long				return_time(int start, t_philo *philo);
 int					is_ready(t_philo *phil);
 void				*full_or_dead(void *arg);
-
+int	return_its_over(t_philo *philo);
 int					monitor_ready(t_philo *phil);
 void	unlock(t_philo *phil);
 void	lock(t_philo *phil);
-
+void	start_time(t_philo *philo);
 #endif

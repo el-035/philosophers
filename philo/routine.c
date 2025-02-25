@@ -3,15 +3,15 @@
 void	eat(t_philo *phil)	//avoid deadlocks
 {
 	lock(phil);
-	if((phil->data->its_over) != 1)
+	if(return_its_over(phil) != 1)
 	{
 		if(pthread_mutex_lock(&phil->data->message)!= 0)
 			return (printf("Error locking mutex\n"), destroy_everything(phil));
-		printf("%ld %d has taken a fork\n", return_time(0), phil->philo);
-		printf("%ld %d is eating\n", return_time(0), phil->philo);		
+		printf("%ld %d has taken a fork\n", return_time(0,phil), phil->philo);
+		printf("%ld %d is eating\n", return_time(0, phil), phil->philo);		
 		if(pthread_mutex_unlock(&phil->data->message)!= 0)
 			return (printf("Error locking mutex\n"), destroy_everything(phil));
-		phil->last_meal = return_time(0);
+		phil->last_meal = return_time(0, phil);
 		usleep(phil->data->t_eat * 1000);
 		phil->meals_eaten++;
 	}
@@ -25,29 +25,31 @@ void *life_cycle(void *arg)	//ok
 	phil = (t_philo *) arg;
 	while (is_ready(phil) == 0)
 		;
-	phil->last_meal = return_time(0);
+	//start_time(phil);
+	
+	phil->last_meal = return_time(0, phil);
 	if(phil->philo % 2 == 0)
 		usleep(phil->data->t_eat / 2);
 	while (phil->meals_eaten != phil->data->n_meals)
 	{
-		if((phil->data->its_over) != 1)
+		if(return_its_over(phil) != 1)
 			eat(phil);
-		if((phil->data->its_over) == 1)
+		if(return_its_over(phil) == 1)
 			return (NULL);
-		if((phil->data->its_over) != 1)
+		if(return_its_over(phil) != 1)
 		{
 			if(pthread_mutex_lock(&phil->data->message)!= 0)
 				return (printf("Error locking mutex\n"), destroy_everything(phil), NULL);
-			printf("%ld %d is sleeping\n", return_time(0), phil->philo);
+			printf("%ld %d is sleeping\n", return_time(0, phil), phil->philo);
 			if(pthread_mutex_unlock(&phil->data->message)!= 0)
 				return (printf("Error locking mutex\n"), destroy_everything(phil), NULL);
 			usleep(phil->data->t_sleep * 1000);
 		}
-		if((phil->data->its_over) != 1)
+		if(return_its_over(phil) != 1)
 		{
 			if(pthread_mutex_lock(&phil->data->message)!= 0)
 				return (printf("Error locking mutex\n"), destroy_everything(phil), NULL);
-			printf("%ld %d is thinking\n", return_time(0), phil->philo);
+			printf("%ld %d is thinking\n", return_time(0, phil), phil->philo);
 			if(pthread_mutex_unlock(&phil->data->message)!= 0)
 				return (printf("Error locking mutex\n"), destroy_everything(phil), NULL);
 		}
