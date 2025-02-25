@@ -12,6 +12,8 @@ t_data	*create_philosophers(char **args)	//ok
 	first = NULL;
 	while (i < ft_atoi(args[1]))
 	{
+		/* if(pthread_mutex_lock(&first->threads)!= 0)
+			return (printf("Error locking mutex\n"), destroy_everything(cur), NULL); */
 		cur = (t_data *) malloc(sizeof(t_data));
 		if (!cur)
 			return (destroy_everything(cur), NULL);
@@ -29,6 +31,8 @@ t_data	*create_philosophers(char **args)	//ok
 			cur->left_fork = &prev->right_fork;
 		}
 		prev = cur;
+		/* if(pthread_mutex_unlock(&first->threads)!= 0)
+			return (printf("Error unlocking mutex\n"), destroy_everything(cur), NULL); */
 	}
 	if (prev)
 	{
@@ -69,37 +73,44 @@ int	check_input(char **args)	//OK
 	}
 	return (0);
 }
+int	init_threads(t_data *phil)
+{
+	int	tot;
+	t_data	*temp;
 
+	temp = phil;
+	tot = phil->n_phils;
+	if (pthread_join(phil->monitor_id, NULL) != 0)
+		return (printf("Error joining thread\n"), destroy_everything(phil), -1);
+	if (pthread_mutex_init(&phil->message, NULL) != 0)
+			return (printf("Error initialising mutex\n"), destroy_everything(phil), -1);
+	if (pthread_mutex_init(&phil->threads, NULL) != 0)
+		return (printf("Error initialising mutex\n"), destroy_everything(phil), -1);
+	while (tot-- > 0)
+	{
+		if (pthread_join(temp->thread_id, NULL) != 0)
+			return (printf("Error joining thread\n"), destroy_everything(phil), -1);
+		/* if (pthread_mutex_init(&temp->right_fork, NULL) != 0)
+			return (printf("Error initialising mutex\n"), destroy_everything(phil), -1); */
+		temp = temp->next;
+	}
+	return (0);
+}
 int main(int argc, char **argv)	//check life cycle and full or dead for errors
 {
 	t_data	*philo;
-	t_data	*temp;
-	int		tot;
-
+	
 	if (argc < 5 || argc > 6)
 		return(printf("Error\nInvalid input\n"), -1);
 	if(check_input(argv) == -1)
 		return(printf("Error\nInvalid input\n"), -1);
-	tot = ft_atoi(argv[1]);
-	if (tot == 1)	//mmh
-		return(printf("0 1 has died\n"));
+	if (ft_atoi(argv[1]) == 1)
+		return(lonely_philo(argv));
 	philo = create_philosophers(argv);
 	if (!philo)
 		return(printf("Error creating philosophers\n"), -1);
-	temp = philo;
 	if (init_monitoring(philo) == -1)
 		return (printf("Error thread\n"), destroy_everything(philo), -1);
-		
-	if (pthread_join(philo->monitor_id, NULL) != 0)
-		return (printf("Error joining thread\n"), destroy_everything(philo), -1);
-	while (tot-- > 0)
-	{
-		if (pthread_join(temp->thread_id, NULL) != 0)
-			return (printf("Error joining thread\n"), destroy_everything(philo), -1);
-		if (pthread_mutex_init(&temp->right_fork, NULL) != 0)
-			return (printf("Error initialising mutex\n"), destroy_everything(philo), -1);
-		temp = temp->next;
-	}
-	//destroy_everything(philo);
+	init_threads(philo);
 	return (0);
 }

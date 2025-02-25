@@ -2,22 +2,22 @@
 
 void	destroy_everything(t_data *phil)
 {
-	destroy_monitor(phil);
-	destroy_threads(phil);
+	//destroy_monitor(phil);
+	//destroy_threads(phil);
 	destroy_list(phil);
 }
 
-void	destroy_monitor(t_data *phil)
+/* void	destroy_monitor(t_data *phil)
 {
 	if (!phil)
 		return ;
 	if (phil->monitor_id != 0)
 	{
 		if (pthread_detach(phil->monitor_id) != 0)
-			printf("Error detaching thread\n");
+			printf("Error detaching thread \n");
 		phil->monitor_id = 0;
 	}
-}
+} */
 
 void	destroy_threads(t_data *phil)
 {
@@ -30,12 +30,12 @@ void	destroy_threads(t_data *phil)
 		return ;
 	while (i < phil->n_phils)
 	{
-		if (cur->thread_id != 0)
+		/* if (cur->thread_id != 0)
 		{
 			if (pthread_detach(cur->thread_id) != 0)
 				printf("Error detaching thread\n");
 			cur->thread_id = 0;
-		}
+		} */
 		if (pthread_mutex_destroy(&cur->right_fork) != 0)
 			printf("Error destroying mutex\n");
 		cur = cur->next;

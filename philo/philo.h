@@ -15,7 +15,7 @@ typedef struct s_data
 	int 			philo; // number of philosopher
 	pthread_t		thread_id;
 	pthread_t		monitor_id;
-	_Atomic int				*its_over;
+	_Atomic int		*its_over;
 	int 			n_phils; // tot phil number
 	long			t_die;
 	long			t_eat;
@@ -25,6 +25,8 @@ typedef struct s_data
 	int				last_meal;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	right_fork;
+	pthread_mutex_t	message;
+	pthread_mutex_t	threads;
 	struct s_data	*next;
 }					t_data;
 
@@ -40,6 +42,8 @@ void				eat(t_data *phil);
 // libft
 int					ft_atoi(const char *str);
 size_t				ft_strlen(const char *str);
+void	*die_alone(void *arg);
+int		lonely_philo(char **args);
 
 // free &error
 //void				errors(char *msg, t_data **data);
@@ -47,6 +51,7 @@ void	destroy_everything(t_data *phil);
 void	destroy_list(t_data *phil);
 void	destroy_monitor(t_data *phil);
 void	destroy_threads(t_data *phil);
+void	destroy_lonely(t_data *phil);
 
 // utils
 long				return_time(int start);
