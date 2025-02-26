@@ -20,7 +20,7 @@ typedef struct s_data
 	long			t_eat;
 	long			t_sleep;
 	pthread_mutex_t	message;
-	pthread_mutex_t	eat;
+	
 	pthread_mutex_t	full;
 }					t_data;
 
@@ -33,6 +33,8 @@ typedef struct s_philo
 	//int				full;
 	long			last_meal;
 	long			start;
+	pthread_mutex_t	eat;
+	pthread_mutex_t	time;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	right_fork;
 	struct s_data	*data;

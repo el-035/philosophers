@@ -54,8 +54,10 @@ int	is_ready(t_philo *phil)
 		cur = cur->next;
 		count--;
 	}
-	if (monitor_ready(phil) == 0)
-		return (0);
+	if (phil->data->monitor_id == 0)
+		return 0;
+	/* if (monitor_ready(phil) == 0)
+		return (0); */
 	return (1);
 }
 
@@ -64,33 +66,17 @@ void	lock(t_philo *phil)
 	if (phil->left_fork < &phil->right_fork)
 	{
 		pthread_mutex_lock(phil->left_fork);
-		//printf("philo %d has taken left fork\n", phil->philo);
 		pthread_mutex_lock(&phil->right_fork);
-		//printf("philo %d has taken right fork\n", phil->philo);
 	}
 	else
 	{
 		pthread_mutex_lock(&phil->right_fork);
-		//printf("philo %d has taken right fork\n", phil->philo);
 		pthread_mutex_lock(phil->left_fork);
-		//printf("philo %d has taken left fork\n", phil->philo);
 	}
 }
 
 void	unlock(t_philo *phil)
 {
-	if (phil->left_fork < &phil->right_fork)
-	{
 		pthread_mutex_unlock(phil->left_fork);
-		//printf("philo %d has drop left fork\n", phil->philo);
 		pthread_mutex_unlock(&phil->right_fork);
-		//printf("philo %d has drop right fork\n", phil->philo);
-	}
-	else
-	{
-		pthread_mutex_unlock(&phil->right_fork);
-		//printf("philo %d has drop right fork\n", phil->philo);
-		pthread_mutex_unlock(phil->left_fork);
-		//printf("philo %d has drop left fork\n", phil->philo);
-	}
 }

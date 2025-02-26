@@ -2,53 +2,73 @@
 
 void	eat(t_philo *phil)	//avoid deadlocks
 {
+	long	cur_time;
+	
+	
 	lock(phil);
 	if(return_its_over(phil) != 1)
 	{
+		pthread_mutex_lock(&phil->time);
+		cur_time = return_time(phil);
+		phil->last_meal = cur_time;
+		pthread_mutex_unlock(&phil->time);
+		
 		pthread_mutex_lock(&phil->data->message);
-		printf("%ld %d has taken a fork\n", return_time(phil), phil->philo);
-		printf("%ld %d is eating\n", return_time(phil), phil->philo);		
-		phil->last_meal = return_time(phil);
+		printf("%ld %d has taken a fork\n", cur_time, phil->philo);
+		printf("%ld %d is eating\n", cur_time, phil->philo);		
 		pthread_mutex_unlock(&phil->data->message);
 		usleep(phil->data->t_eat * 1000);
-		phil->meals_eaten++;
+		
+	
 	}
-	unlock(phil);
+	pthread_mutex_unlock(phil->left_fork);
+	pthread_mutex_unlock(&phil->right_fork);
+	
+	pthread_mutex_lock(&phil->time);
+	phil->meals_eaten++;
+	pthread_mutex_unlock(&phil->time);
 }
 
 void *life_cycle(void *arg)	//ok
 {
 	t_philo	*phil;
+	long	cur_time;
 
 	phil = (t_philo *) arg;
-	start_time(phil);
 	while (is_ready(phil) == 0)
 		;
-	
+	pthread_mutex_lock(&phil->time);
+	start_time(phil);
 	phil->last_meal = return_time(phil);
+	pthread_mutex_unlock(&phil->time);
+	
 	if(phil->philo % 2 == 0)
 		usleep(phil->data->t_eat / 2);
-	while (phil->meals_eaten != phil->n_meals)
+	while (1)
 	{
 		if(return_its_over(phil) != 1)
-		{
-			pthread_mutex_lock(&phil->data->eat);
 			eat(phil);
-			pthread_mutex_unlock(&phil->data->eat);
-		}
 		if(return_its_over(phil) == 1)
 			return (NULL);
 		if(return_its_over(phil) != 1)
 		{
+			pthread_mutex_lock(&phil->time);
+			cur_time = return_time(phil);
+			pthread_mutex_unlock(&phil->time);
+			
 			pthread_mutex_lock(&phil->data->message);
-			printf("%ld %d is sleeping\n", return_time(phil), phil->philo);
+			printf("%ld %d is sleeping\n", cur_time, phil->philo);
 			pthread_mutex_unlock(&phil->data->message);
 			usleep(phil->data->t_sleep * 1000);
 		}
 		if(return_its_over(phil) != 1)
 		{
+			pthread_mutex_lock(&phil->time);
+			cur_time = return_time(phil);
+			pthread_mutex_unlock(&phil->time);
+
 			pthread_mutex_lock(&phil->data->message);
-			printf("%ld %d is thinking\n", return_time(phil), phil->philo);
+			printf("%ld %d is thinking\n", cur_time, phil->philo);
 			pthread_mutex_unlock(&phil->data->message);
 		}
 			

@@ -26,10 +26,16 @@ t_philo	*create_philos(char **args)
 			cur->n_meals = ft_atoi(args[5]); 
 		else
 			cur->n_meals = -1;
-		if (pthread_create(&cur->thread_id, NULL, life_cycle, cur) != 0)
-			return (destroy_everything(cur), NULL);
+		
 		if (pthread_mutex_init(&cur->right_fork, NULL) != 0)
 			return (printf("Error initialising mutex\n"), destroy_everything(first), NULL);
+		if (pthread_mutex_init(&cur->time, NULL) != 0)
+			return (printf("Error initialising mutex\n"), destroy_everything(first), NULL);
+		if (pthread_mutex_init(&cur->eat, NULL) != 0)
+			return (printf("Error initialising mutex\n"), destroy_everything(first), NULL);
+		
+		if (pthread_create(&cur->thread_id, NULL, life_cycle, cur) != 0)
+			return (destroy_everything(cur), NULL);
 		if (!first)
 			first = cur;
 		else
@@ -62,8 +68,8 @@ void	initialise_data(char **args, t_data **data)
 		(*data)->n_meals = -1;*/
 	if (pthread_mutex_init(&(*data)->message, NULL) != 0)
 			return (printf("Error initialising mutex\n"), destroy_everything(NULL));
-	if (pthread_mutex_init(&(*data)->eat, NULL) != 0)
-		return (printf("Error initialising mutex\n"), destroy_everything(NULL));
+/* 	if (pthread_mutex_init(&(*data)->eat, NULL) != 0)
+		return (printf("Error initialising mutex\n"), destroy_everything(NULL)); */
 	if (pthread_mutex_init(&(*data)->end, NULL) != 0)
 		return (printf("Error initialising mutex\n"), destroy_everything(NULL));
 	if (pthread_mutex_init(&(*data)->full, NULL) != 0)

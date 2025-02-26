@@ -26,8 +26,8 @@ void destroy_mutex(t_philo *phil)
 			printf("Error destroying mutex\n");
 	if (pthread_mutex_destroy(&cur->data->message) != 0)
 			printf("Error destroying mutex\n");
-	if (pthread_mutex_destroy(&cur->data->eat) != 0)
-			printf("Error destroying mutex\n");
+	/* if (pthread_mutex_destroy(&cur->data->eat) != 0)
+			printf("Error destroying mutex\n"); */
 }
 
 	
