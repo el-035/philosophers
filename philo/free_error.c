@@ -2,46 +2,34 @@
 
 void	destroy_everything(t_philo *phil)
 {
-	//destroy_monitor(phil);
-	//destroy_threads(phil);
+
 	destroy_list(phil);
 }
 
-/* void	destroy_monitor(t_data *phil)
+void destroy_mutex(t_philo *phil)
 {
-	if (!phil)
-		return ;
-	if (phil->monitor_id != 0)
-	{
-		if (pthread_detach(phil->monitor_id) != 0)
-			printf("Error detaching thread \n");
-		phil->monitor_id = 0;
-	}
-} */
-
-/*void	destroy_threads(t_data *phil)
-{
- 	t_data *cur;
+	t_philo *cur;
 	int		i;
 
 	i = 0;
 	cur = phil;
 	if (!phil)
 		return ;
-	while (i < phil->n_phils)
+	while (i < phil->data->n_phils)
 	{
-		if (cur->thread_id != 0)
-		{
-			if (pthread_detach(cur->thread_id) != 0)
-				printf("Error detaching thread\n");
-			cur->thread_id = 0;
-		}
 		if (pthread_mutex_destroy(&cur->right_fork) != 0)
 			printf("Error destroying mutex\n");
 		cur = cur->next;
 		i++;
-	} 
-}*/
+	}
+	if (pthread_mutex_destroy(&cur->data->end) != 0)
+			printf("Error destroying mutex\n");
+	if (pthread_mutex_destroy(&cur->data->message) != 0)
+			printf("Error destroying mutex\n");
+	if (pthread_mutex_destroy(&cur->data->eat) != 0)
+			printf("Error destroying mutex\n");
+}
+
 	
 void	destroy_list(t_philo *phil)
 {

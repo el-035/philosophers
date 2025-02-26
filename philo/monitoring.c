@@ -17,49 +17,45 @@ void	*full_or_dead(void *arg)
 	t_philo	*phil;
 	t_philo	*cur;
 	int		i;
-	int		full_belly;
-	//int		cur_time;
+	int 	full_belly;
 
 	phil = (t_philo *) arg;
 	while (is_ready(phil) == 0)
 		;
-	start_time(phil);
-	
 	while (1)
 	{
 		i = 0;
 		cur = phil;
 		full_belly = 0;
-
 		while (i < phil->data->n_phils)
 		{
-			if (return_time(0, phil) - cur->last_meal > cur->data->t_die)
+			if (return_time(cur) - cur->last_meal > cur->data->t_die)
 			{
-				if(pthread_mutex_lock(&phil->data->end)!= 0)
-					return (printf("Error locking mutex\n"), destroy_everything(NULL), NULL);
+				pthread_mutex_lock(&phil->data->end);
 				(cur->data->its_over) = 1;
-				if(pthread_mutex_unlock(&phil->data->end)!= 0)
-					return (printf("Error unlocking mutex\n"), destroy_everything(NULL), NULL);
+				pthread_mutex_unlock(&phil->data->end);
+					
 
-				if(pthread_mutex_lock(&phil->data->message)!= 0)
-					return (printf("Error locking mutex\n"), destroy_everything(phil), NULL);
-				printf("%ld %d died\n", return_time(0, phil), cur->philo);
-				if(pthread_mutex_unlock(&phil->data->message)!= 0)		//somewhere else but where
-					return (printf("Error locking mutex\n"), destroy_everything(phil), NULL);
+				pthread_mutex_lock(&phil->data->message);
+				printf("%ld %d died\n", return_time(cur), cur->philo);
+				pthread_mutex_unlock(&phil->data->message);		//somewhere else but where
+					
+				
 				return (NULL);
 			}
-			if (cur->meals_eaten == cur->data->n_meals)
+			
+			if (cur->meals_eaten == cur->n_meals)
 				full_belly++;
-			cur = cur->next;
+						cur = cur->next;
 			i++;
 		}
 		if (full_belly == phil->data->n_phils)
 		{
-			if(pthread_mutex_lock(&phil->data->end)!= 0)
-				return (printf("Error locking mutex\n"), destroy_everything(NULL), NULL);
+			pthread_mutex_lock(&phil->data->end);
+				
 			(cur->data->its_over) = 1;
-			if(pthread_mutex_unlock(&phil->data->end)!= 0)
-				return (printf("Error unlocking mutex\n"), destroy_everything(NULL), NULL);
+			pthread_mutex_unlock(&phil->data->end);
+				
 			return (NULL);
 		}
 	}

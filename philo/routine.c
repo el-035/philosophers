@@ -5,13 +5,11 @@ void	eat(t_philo *phil)	//avoid deadlocks
 	lock(phil);
 	if(return_its_over(phil) != 1)
 	{
-		if(pthread_mutex_lock(&phil->data->message)!= 0)
-			return (printf("Error locking mutex\n"), destroy_everything(phil));
-		printf("%ld %d has taken a fork\n", return_time(0,phil), phil->philo);
-		printf("%ld %d is eating\n", return_time(0, phil), phil->philo);		
-		if(pthread_mutex_unlock(&phil->data->message)!= 0)
-			return (printf("Error locking mutex\n"), destroy_everything(phil));
-		phil->last_meal = return_time(0, phil);
+		pthread_mutex_lock(&phil->data->message);
+		printf("%ld %d has taken a fork\n", return_time(phil), phil->philo);
+		printf("%ld %d is eating\n", return_time(phil), phil->philo);		
+		phil->last_meal = return_time(phil);
+		pthread_mutex_unlock(&phil->data->message);
 		usleep(phil->data->t_eat * 1000);
 		phil->meals_eaten++;
 	}
@@ -23,35 +21,35 @@ void *life_cycle(void *arg)	//ok
 	t_philo	*phil;
 
 	phil = (t_philo *) arg;
+	start_time(phil);
 	while (is_ready(phil) == 0)
 		;
-	//start_time(phil);
 	
-	phil->last_meal = return_time(0, phil);
+	phil->last_meal = return_time(phil);
 	if(phil->philo % 2 == 0)
 		usleep(phil->data->t_eat / 2);
-	while (phil->meals_eaten != phil->data->n_meals)
+	while (phil->meals_eaten != phil->n_meals)
 	{
 		if(return_its_over(phil) != 1)
+		{
+			pthread_mutex_lock(&phil->data->eat);
 			eat(phil);
+			pthread_mutex_unlock(&phil->data->eat);
+		}
 		if(return_its_over(phil) == 1)
 			return (NULL);
 		if(return_its_over(phil) != 1)
 		{
-			if(pthread_mutex_lock(&phil->data->message)!= 0)
-				return (printf("Error locking mutex\n"), destroy_everything(phil), NULL);
-			printf("%ld %d is sleeping\n", return_time(0, phil), phil->philo);
-			if(pthread_mutex_unlock(&phil->data->message)!= 0)
-				return (printf("Error locking mutex\n"), destroy_everything(phil), NULL);
+			pthread_mutex_lock(&phil->data->message);
+			printf("%ld %d is sleeping\n", return_time(phil), phil->philo);
+			pthread_mutex_unlock(&phil->data->message);
 			usleep(phil->data->t_sleep * 1000);
 		}
 		if(return_its_over(phil) != 1)
 		{
-			if(pthread_mutex_lock(&phil->data->message)!= 0)
-				return (printf("Error locking mutex\n"), destroy_everything(phil), NULL);
-			printf("%ld %d is thinking\n", return_time(0, phil), phil->philo);
-			if(pthread_mutex_unlock(&phil->data->message)!= 0)
-				return (printf("Error locking mutex\n"), destroy_everything(phil), NULL);
+			pthread_mutex_lock(&phil->data->message);
+			printf("%ld %d is thinking\n", return_time(phil), phil->philo);
+			pthread_mutex_unlock(&phil->data->message);
 		}
 			
 	}
@@ -63,12 +61,11 @@ void	*die_alone(void *arg)
 	t_philo	*phil;
 
 	phil = (t_philo *) arg;
-	if(pthread_mutex_lock(&phil->right_fork)!= 0)
-		return (printf("Error locking mutex\n"), destroy_everything(phil), NULL);
+	pthread_mutex_lock(&phil->right_fork);
 	usleep(phil->data->t_die);
 	printf("%ld %d died\n", phil->data->t_die, 1);
-	if(pthread_mutex_unlock(&phil->right_fork) != 0)
-		return (printf("Error unlocking mutex\n"), destroy_everything(phil), NULL);
+	pthread_mutex_unlock(&phil->right_fork);
+
 	return (NULL);
 }
 

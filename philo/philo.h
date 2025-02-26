@@ -19,10 +19,9 @@ typedef struct s_data
 	long			t_die;
 	long			t_eat;
 	long			t_sleep;
-	int				n_meals;
 	pthread_mutex_t	message;
-	long			start;
-	pthread_mutex_t	time;
+	pthread_mutex_t	eat;
+	pthread_mutex_t	full;
 }					t_data;
 
 typedef struct s_philo
@@ -30,7 +29,10 @@ typedef struct s_philo
 	int 			philo; // number of philosopher
 	pthread_t		thread_id;
 	int				meals_eaten;
+	int				n_meals;
+	//int				full;
 	long			last_meal;
+	long			start;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	right_fork;
 	struct s_data	*data;
@@ -56,10 +58,10 @@ int		lonely_philo(char **args);
 //void				errors(char *msg, t_philo **data);
 void	destroy_everything(t_philo *phil);
 void	destroy_list(t_philo *phil);
-
+void destroy_mutex(t_philo *phil);
 
 // utils
-long				return_time(int start, t_philo *philo);
+long				return_time(t_philo *philo);
 int					is_ready(t_philo *phil);
 void				*full_or_dead(void *arg);
 int	return_its_over(t_philo *philo);

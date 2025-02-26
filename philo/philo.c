@@ -1,6 +1,6 @@
 #include "philo.h"
 
-t_philo	*create_philos(char **args)	//not ok
+t_philo	*create_philos(char **args)
 {
 	t_data *data;
 	t_philo	*first;
@@ -22,6 +22,10 @@ t_philo	*create_philos(char **args)	//not ok
 		memset(cur, 0, sizeof(t_philo));
 		cur->data = data;
 		cur->philo = i;
+		if (args[5])
+			cur->n_meals = ft_atoi(args[5]); 
+		else
+			cur->n_meals = -1;
 		if (pthread_create(&cur->thread_id, NULL, life_cycle, cur) != 0)
 			return (destroy_everything(cur), NULL);
 		if (pthread_mutex_init(&cur->right_fork, NULL) != 0)
@@ -43,7 +47,7 @@ t_philo	*create_philos(char **args)	//not ok
 	return (first);
 }
 
-void	initialise_data(char **args, t_data **data)	//ok
+void	initialise_data(char **args, t_data **data)
 {
 	memset(*data, 0, sizeof(t_data));
 
@@ -52,15 +56,17 @@ void	initialise_data(char **args, t_data **data)	//ok
 	(*data)->t_die = ft_atoi(args[2]);
 	(*data)->t_eat = ft_atoi(args[3]);
 	(*data)->t_sleep = ft_atoi(args[4]);
-	if (args[5])
-		(*data)->n_meals = ft_atoi(args[5]);
+	/* if (args[5])
+		(*data)->n_meals = ft_atoi(args[5]); 
 	else
-		(*data)->n_meals = -1;
+		(*data)->n_meals = -1;*/
 	if (pthread_mutex_init(&(*data)->message, NULL) != 0)
 			return (printf("Error initialising mutex\n"), destroy_everything(NULL));
-	if (pthread_mutex_init(&(*data)->time, NULL) != 0)
+	if (pthread_mutex_init(&(*data)->eat, NULL) != 0)
 		return (printf("Error initialising mutex\n"), destroy_everything(NULL));
 	if (pthread_mutex_init(&(*data)->end, NULL) != 0)
+		return (printf("Error initialising mutex\n"), destroy_everything(NULL));
+	if (pthread_mutex_init(&(*data)->full, NULL) != 0)
 		return (printf("Error initialising mutex\n"), destroy_everything(NULL));
 }
 
@@ -114,6 +120,7 @@ int main(int argc, char **argv)	//check life cycle and full or dead for errors
 	if (pthread_create(&philo->data->monitor_id, NULL, full_or_dead, philo) != 0)	
 		return (printf("Error thread\n"), destroy_everything(philo), -1);
 	join_threads(philo);
+	//destroy_mutex(philo);
 	free(philo->data);
 	//destroy_list(philo);
 	return (0);

@@ -4,40 +4,20 @@ void	start_time(t_philo *philo)
 	struct timeval	time;
 	long	start;
 
-	/* if(pthread_mutex_lock(&philo->data->time)!= 0)
-		return (printf("Error locking mutex\n"), destroy_everything(NULL)); */
 	if (gettimeofday(&time, NULL) != 0)
-	{
-/* 		if(pthread_mutex_unlock(&philo->data->time)!= 0)
-			return (printf("Error locking mutex\n"), destroy_everything(NULL)); */
 		return ;
-	}
 	start = time.tv_sec * 1000 + time.tv_usec / 1000;
-	philo->data->start = start;
-/* 	if(pthread_mutex_unlock(&philo->data->time)!= 0)
-		return (printf("Error locking mutex\n"), destroy_everything(NULL)); */
-	
+	philo->start = start;	
 }
 
-long	return_time(int flag, t_philo *philo)
+long	return_time(t_philo *philo)
 {
 	struct timeval	time;
-	//static long		start;
+
 	long	res;
-	(void)flag;
-/* 	if(pthread_mutex_lock(&philo->data->time)!= 0)
-			return (printf("Error locking mutex\n"), destroy_everything(NULL), 0); */
-	/* if (flag == 1)
-	{
-		if (gettimeofday(&time, NULL) != 0)
-			return (0);
-		start = time.tv_sec * 1000 + time.tv_usec / 1000;
-	} */
 	if (gettimeofday(&time, NULL) != 0)
 		return (0);
-	res = time.tv_sec * 1000 + time.tv_usec / 1000 - philo->data->start;
-/* 	if(pthread_mutex_unlock(&philo->data->time)!= 0)
-			return (printf("Error locking mutex\n"), destroy_everything(NULL), 0); */
+	res = time.tv_sec * 1000 + time.tv_usec / 1000 - philo->start;
 	return (res);
 }
 
@@ -76,13 +56,6 @@ int	is_ready(t_philo *phil)
 	}
 	if (monitor_ready(phil) == 0)
 		return (0);
-	//return_time(1, phil);
-	/* if(pthread_mutex_lock(&phil->data->time)!= 0)
-		return (printf("Error locking mutex\n"), destroy_everything(NULL), 0); */
-
-	//start_time(phil);
-/* 	if(pthread_mutex_unlock(&phil->data->time)!= 0)
-		return (printf("Error locking mutex\n"), destroy_everything(NULL), 0); */
 	return (1);
 }
 
@@ -90,17 +63,17 @@ void	lock(t_philo *phil)
 {
 	if (phil->left_fork < &phil->right_fork)
 	{
-		if(pthread_mutex_lock(phil->left_fork)!= 0)
-			return (printf("Error locking mutex\n"), destroy_everything(phil));
-		if(pthread_mutex_lock(&phil->right_fork) != 0)
-			return (printf("Error locking mutex\n"), destroy_everything(phil));
+		pthread_mutex_lock(phil->left_fork);
+		//printf("philo %d has taken left fork\n", phil->philo);
+		pthread_mutex_lock(&phil->right_fork);
+		//printf("philo %d has taken right fork\n", phil->philo);
 	}
 	else
 	{
-		if(pthread_mutex_lock(&phil->right_fork) != 0)
-			return (printf("Error locking mutex\n"), destroy_everything(phil));
-		if(pthread_mutex_lock(phil->left_fork)!= 0)
-			return (printf("Error locking mutex\n"), destroy_everything(phil));
+		pthread_mutex_lock(&phil->right_fork);
+		//printf("philo %d has taken right fork\n", phil->philo);
+		pthread_mutex_lock(phil->left_fork);
+		//printf("philo %d has taken left fork\n", phil->philo);
 	}
 }
 
@@ -108,16 +81,16 @@ void	unlock(t_philo *phil)
 {
 	if (phil->left_fork < &phil->right_fork)
 	{
-		if(pthread_mutex_unlock(phil->left_fork) != 0)
-			return (printf("Error unlocking mutex\n"), destroy_everything(phil));
-		if(pthread_mutex_unlock(&phil->right_fork) != 0)
-			return (printf("Error unlocking mutex\n"), destroy_everything(phil));
+		pthread_mutex_unlock(phil->left_fork);
+		//printf("philo %d has drop left fork\n", phil->philo);
+		pthread_mutex_unlock(&phil->right_fork);
+		//printf("philo %d has drop right fork\n", phil->philo);
 	}
 	else
 	{
-		if(pthread_mutex_unlock(&phil->right_fork) != 0)
-			return (printf("Error unlocking mutex\n"), destroy_everything(phil));
-		if(pthread_mutex_unlock(phil->left_fork) != 0)
-			return (printf("Error unlocking mutex\n"), destroy_everything(phil));
+		pthread_mutex_unlock(&phil->right_fork);
+		//printf("philo %d has drop right fork\n", phil->philo);
+		pthread_mutex_unlock(phil->left_fork);
+		//printf("philo %d has drop left fork\n", phil->philo);
 	}
 }
