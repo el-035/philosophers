@@ -29,12 +29,13 @@ void	eat(t_philo *phil)	//avoid deadlocks
 	pthread_mutex_unlock(&phil->time);
 }
 
-void *life_cycle(void *arg)	//ok
+void *life_cycle(void *arg)
 {
 	t_philo	*phil;
 	long	cur_time;
 
 	phil = (t_philo *) arg;
+
 	while (is_ready(phil) == 0)
 		;
 	pthread_mutex_lock(&phil->time);
