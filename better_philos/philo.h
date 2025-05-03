@@ -42,6 +42,9 @@ void	*life_cycle(void *arg);
 // monitoring
 void	*full_or_dead(void *arg);
 
+//solo
+int	lonely_philo(char **args);
+
 //utils
 int	is_ready(t_philo *first);
 
@@ -50,5 +53,6 @@ int	ft_atoi(const char *str);
 
 //free
 void	free_list(t_philo *phil);
+void	destroy_everything(t_philo *philo, t_data *data);
 
 #endif

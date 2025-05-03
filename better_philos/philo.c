@@ -108,8 +108,6 @@ int main(int argc, char **argv)
 {
 	t_philo	*philo;
 	t_data	*data;
-	//t_philo	*temp;
-	int		tot;
 
 	if (argc < 5 || argc > 6)
 		return(printf("Error\nInvalid input\n"), -1);
@@ -120,14 +118,13 @@ int main(int argc, char **argv)
 	data = (t_data *) malloc (sizeof(t_data));
 	if (!data)
 		return (-1); //error
-	tot = ft_atoi(argv[1]);
 	data = init_data(/* philo, */ data);
-	philo = create_philos(argv, tot, data);
+	
+	philo = create_philos(argv, ft_atoi(argv[1]), data);
 	if (!philo)
 		return -1;
 	start_threads(philo, data);
 
 
-	free_list(philo);
-	free(data);
+	destroy_everything(philo, data);
 }
