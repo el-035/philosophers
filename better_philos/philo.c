@@ -31,13 +31,15 @@ void	init_philo(char **args, int i, t_philo **phil)
 	else
 		(*phil)->n_meals = -1;
 	pthread_mutex_init(&(*phil)->right_fork, NULL);
+	//pthread_mutex_init(&(*phil)->food, NULL);
+
 }
 
 t_data	*init_data(/* t_philo *phil,  */t_data *data)
 {
 	data->over = 0;
+	//pthread_mutex_init(&data->time, NULL);
 	pthread_mutex_init(&data->time, NULL);
-	pthread_mutex_init(&data->food, NULL);
 	pthread_mutex_init(&data->init, NULL);
 	return (data);
 }
@@ -80,12 +82,19 @@ void	start_threads(t_philo *philo, t_data *data)	//change to int??
 {
 	t_philo	*cur;
 
+	cur = philo;
+
+	
+
 	pthread_mutex_lock(&philo->data->init);
 	pthread_create(&data->monitor_id, NULL, full_or_dead, philo);
 	pthread_mutex_unlock(&philo->data->init);
-	cur = philo;
 	while (cur)
 	{
+		/* pthread_mutex_lock(&philo->data->time);
+		cur->last_meal = cur->data->start;
+		pthread_mutex_unlock(&philo->data->time); */
+
 		pthread_mutex_lock(&cur->data->init);
 		pthread_create(&cur->thread_id, NULL, life_cycle, cur);
 		pthread_mutex_unlock(&cur->data->init);
@@ -93,13 +102,14 @@ void	start_threads(t_philo *philo, t_data *data)	//change to int??
 			break ;
 		cur = cur->next;
 	}
-	pthread_join(philo->data->monitor_id, NULL);
+	
 	cur = philo;
+	pthread_join(philo->data->monitor_id, NULL);
 	while (cur)
 	{
 		pthread_join(cur->thread_id, NULL);
 		if (cur->next == philo)
-			break ;
+		break ;
 		cur = cur->next;
 	}
 }
@@ -113,18 +123,19 @@ int main(int argc, char **argv)
 		return(printf("Error\nInvalid input\n"), -1);
 	if(check_input(argv) == -1)
 		return(printf("Error\nInvalid input\n"), -1);
+	//ONE PHILO
 	if (ft_atoi(argv[1]) == 1)
 		return(lonely_philo(argv), 1);
+	//MORE PHILOS INITIALISE
 	data = (t_data *) malloc (sizeof(t_data));
 	if (!data)
-		return (-1); //error
-	data = init_data(/* philo, */ data);
-	
+		return (-1);
+	data = init_data(data);
 	philo = create_philos(argv, ft_atoi(argv[1]), data);
 	if (!philo)
 		return -1;
+	//START THREADS
 	start_threads(philo, data);
-
 
 	destroy_everything(philo, data);
 }

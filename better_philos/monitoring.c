@@ -3,11 +3,48 @@
 void	*full_or_dead(void *arg)
 {
 	t_philo	*phil;
+	t_philo *cur;
+	long	cur_time;
+	int		full;
+	int		over;
 
 	phil = (t_philo *) arg;
 	while (is_ready(phil) == 1)
-		usleep(100);	//remove
-	printf("inside thread of monitoring\n");
-	(void) phil;
+		usleep(1000);	//remove
+	over = 0;
+	while (1)
+	{
+		cur = phil;
+		full = 1;
+		while (1)
+		{
+			pthread_mutex_lock(&cur->data->time);
+			cur_time = return_time(cur);
+			if ((cur_time - cur->last_meal) > cur->t_die)
+				over = 1;
+			if (cur->meals_eaten != cur->n_meals)
+				full = 0;
+			pthread_mutex_unlock(&cur->data->time);
+			
+			if (over == 1)
+			{
+				pthread_mutex_lock(&cur->data->init);
+				(cur->data->over) = 1;
+				printf("%ld %d died\n", cur_time, cur->philo);
+				pthread_mutex_unlock(&cur->data->init);
+				return (NULL);
+			}
+			cur = cur->next;
+			if (cur == phil)
+				break ;
+		}
+		if (full == 1)
+		{
+			pthread_mutex_lock(&cur->data->init);
+			(cur->data->over) = 1;
+			pthread_mutex_unlock(&cur->data->init);
+			return (NULL);
+		}
+	}
 	return (NULL);
 }
