@@ -24,13 +24,3 @@ int	ft_atoi(const char *str)
 		return (-1);
 	return (result);
 }
-
-/* size_t	ft_strlen(const char *str) //OK
-{
-	size_t i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-} */

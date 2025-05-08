@@ -11,9 +11,8 @@ void	init_time(t_philo *philo)
 	while (cur)
 	{
 		pthread_mutex_lock(&philo->data->time);
-		cur->last_meal = cur->data->start;
+		cur->last_meal = return_time(philo);
 		pthread_mutex_unlock(&philo->data->time);
-
 		if (cur->next == philo)
 			break ;
 		cur = cur->next;
@@ -23,21 +22,21 @@ void	init_time(t_philo *philo)
 int	is_ready(t_philo *first)
 {
 	t_philo *cur;
-	int		tot;
 
 	cur = first;
-	tot = first->n_phils;
 	pthread_mutex_lock(&first->data->init);
 	if (!first->data->monitor_id)
 		return (pthread_mutex_unlock(&first->data->init), 1);
 	pthread_mutex_unlock(&first->data->init);
-	while(tot-- > 0)
+	while(1)
 	{
 		pthread_mutex_lock(&cur->data->init);
 		if (!cur->thread_id)
 			return (pthread_mutex_unlock(&cur->data->init), 1);
 		pthread_mutex_unlock(&cur->data->init);
 		cur = cur->next;
+		if (cur == first)
+			break;
 	}
 	init_time(first);
 	return 0;
@@ -75,18 +74,3 @@ int	return_its_over(t_philo *philo)
 	pthread_mutex_unlock(&philo->data->init);
 	return (end);
 }
-
-void	lock(t_philo *phil)
-{
-	if (phil->philo % 2 == 0)
-	{
-		pthread_mutex_lock(&phil->right_fork);
-		pthread_mutex_lock(phil->left_fork);
-	}
-	else
-	{
-		pthread_mutex_lock(phil->left_fork);
-		pthread_mutex_lock(&phil->right_fork);
-	}
-}
-

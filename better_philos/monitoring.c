@@ -6,12 +6,10 @@ void	*full_or_dead(void *arg)
 	t_philo *cur;
 	long	cur_time;
 	int		full;
-	int		over;
 
 	phil = (t_philo *) arg;
 	while (is_ready(phil) == 1)
-		usleep(1000);	//remove
-	over = 0;
+		;
 	while (1)
 	{
 		cur = phil;
@@ -20,20 +18,19 @@ void	*full_or_dead(void *arg)
 		{
 			pthread_mutex_lock(&cur->data->time);
 			cur_time = return_time(cur);
+		
 			if ((cur_time - cur->last_meal) > cur->t_die)
-				over = 1;
-			if (cur->meals_eaten != cur->n_meals)
-				full = 0;
-			pthread_mutex_unlock(&cur->data->time);
-			
-			if (over == 1)
 			{
 				pthread_mutex_lock(&cur->data->init);
 				(cur->data->over) = 1;
-				printf("%ld %d died\n", cur_time, cur->philo);
 				pthread_mutex_unlock(&cur->data->init);
-				return (NULL);
+				usleep(3000);	//probably unnecessary
+				printf("%ld %d died\n", cur_time, cur->philo);
+				return (pthread_mutex_unlock(&cur->data->time), NULL);
 			}
+			if (cur->meals_eaten < cur->n_meals)
+				full = 0;
+			pthread_mutex_unlock(&cur->data->time);
 			cur = cur->next;
 			if (cur == phil)
 				break ;

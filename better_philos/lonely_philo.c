@@ -28,11 +28,11 @@ int	lonely_philo(char **args)
 	philo->t_die = ft_atoi(args[2]);
 	philo->data = data;
 	if (pthread_mutex_init(&philo->right_fork, NULL) != 0)
-			return (printf("Error initialising mutex\n"), free(philo), free(data), -1);
+		return (printf("Error initialising mutex\n"), free(philo), free(data), -1);
 	if (pthread_create(&philo->thread_id, NULL, die_alone, philo) != 0)
-			return (free(philo), free(data), -1);
+		return (free(philo), free(data), -1);
 	if (pthread_join(philo->thread_id, NULL) != 0)
-			return (printf("Error joining thread\n"), free(philo), free(data), -1);
+		return (printf("Error joining thread\n"), free(philo), free(data), -1);
 	free(philo);
 	free(data);
 	return (0);

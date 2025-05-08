@@ -20,9 +20,7 @@ typedef struct s_philo
 	int			meals_eaten;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	right_fork;
-//	pthread_mutex_t	food;
 	long			last_meal;
-	//long			start;
 	struct s_data	*data;
 	struct s_philo	*next;
 }				t_philo;
@@ -30,7 +28,6 @@ typedef struct s_philo
 typedef struct s_data
 {
 	pthread_t	monitor_id;
-	//pthread_mutex_t	food;
 	pthread_mutex_t	init;
 	pthread_mutex_t	time;
 	long			start;
@@ -54,6 +51,9 @@ void	start_time(t_data *data);
 long	return_time(t_philo *philo);
 void	lock(t_philo *phil);
 int	return_its_over(t_philo *philo);
+void	init_time(t_philo *philo);
+//int	return_its_full(t_philo *philo);
+
 //libft
 int	ft_atoi(const char *str);
 
