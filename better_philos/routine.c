@@ -1,15 +1,13 @@
 #include"philo.h"
 
-/* static void	fake_usleep(t_philo *phil, long start_time)
+void	better_sleep(long	time)
 {
-	long cur_time;
+	long	start;
 
-	pthread_mutex_lock(&phil->data->time);
-	cur_time = return_time(phil);
-	pthread_mutex_unlock(&phil->data->time);
-
-	while (phil->last_meal + time != cur_time)
-} */
+	start = sleep_time();
+	while (sleep_time() < (start + time))
+		usleep(500);
+}
 
 void	lock(t_philo *phil)
 {
@@ -41,7 +39,8 @@ void	eat(t_philo *phil)
 	printf("%ld %d has taken a fork\n", cur_time, phil->philo);
 	printf("%ld %d is eating\n", cur_time, phil->philo);		
 	pthread_mutex_unlock(&phil->data->init);
-	usleep(phil->t_eat * 1000);
+	/* usleep(phil->t_eat * 1000); */
+	better_sleep(phil->t_eat);
 
 	pthread_mutex_unlock(phil->left_fork);
 	pthread_mutex_unlock(&phil->right_fork);
@@ -63,7 +62,8 @@ void	nap(t_philo *phil)
 	pthread_mutex_lock(&phil->data->init);
 	printf("%ld %d is sleeping\n", cur_time, phil->philo);
 	pthread_mutex_unlock(&phil->data->init);
-	usleep(phil->t_sleep * 1000);
+	/* usleep(phil->t_sleep * 1000); */
+	better_sleep(phil->t_sleep);
 }
 
 void	think(t_philo *phil)

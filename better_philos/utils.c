@@ -64,7 +64,15 @@ long	return_time(t_philo *philo)
 	res = time.tv_sec * 1000 + time.tv_usec / 1000 - philo->data->start;
 	return (res);
 }
+long	sleep_time()
+{
+	struct timeval	time;
 
+	long	res;
+	if (gettimeofday(&time, NULL) != 0)
+		return (0);
+	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+}
 int	return_its_over(t_philo *philo)
 {
 	int	end;

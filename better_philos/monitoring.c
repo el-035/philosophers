@@ -19,7 +19,7 @@ void	*full_or_dead(void *arg)
 			pthread_mutex_lock(&cur->data->time);
 			cur_time = return_time(cur);
 		
-			if ((cur_time - cur->last_meal) > cur->t_die)	//or >=?
+			if ((cur_time - cur->last_meal) >= cur->t_die)	//or >=?
 			{
 				pthread_mutex_lock(&cur->data->init);
 				(cur->data->over) = 1;
