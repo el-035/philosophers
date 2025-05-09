@@ -19,12 +19,12 @@ void	*full_or_dead(void *arg)
 			pthread_mutex_lock(&cur->data->time);
 			cur_time = return_time(cur);
 		
-			if ((cur_time - cur->last_meal) > cur->t_die)
+			if ((cur_time - cur->last_meal) > cur->t_die)	//or >=?
 			{
 				pthread_mutex_lock(&cur->data->init);
 				(cur->data->over) = 1;
 				pthread_mutex_unlock(&cur->data->init);
-				usleep(3000);	//probably unnecessary
+				/* usleep(3000);	//probably unnecessary */
 				printf("%ld %d died\n", cur_time, cur->philo);
 				return (pthread_mutex_unlock(&cur->data->time), NULL);
 			}
