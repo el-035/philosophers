@@ -11,7 +11,7 @@ void	init_time(t_philo *philo)
 	while (cur)
 	{
 		pthread_mutex_lock(&philo->data->time);
-		cur->last_meal = /* return_time(philo); */ philo->data->start;
+		cur->last_meal = philo->data->start;
 		pthread_mutex_unlock(&philo->data->time);
 		if (cur->next == philo)
 			break ;
@@ -36,7 +36,7 @@ int	is_ready(t_philo *first)
 		pthread_mutex_unlock(&cur->data->init);
 		cur = cur->next;
 		if (cur == first)
-			break;
+			break ;
 	}
 	init_time(first);
 	return 0;
@@ -64,15 +64,7 @@ long	return_time(t_philo *philo)
 	res = time.tv_sec * 1000 + time.tv_usec / 1000 - philo->data->start;
 	return (res);
 }
-long	sleep_time()
-{
-	struct timeval	time;
 
-	long	res;
-	if (gettimeofday(&time, NULL) != 0)
-		return (0);
-	return (time.tv_sec * 1000 + time.tv_usec / 1000);
-}
 int	return_its_over(t_philo *philo)
 {
 	int	end;

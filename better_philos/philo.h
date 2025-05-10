@@ -53,7 +53,8 @@ void	lock(t_philo *phil);
 int	return_its_over(t_philo *philo);
 void	init_time(t_philo *philo);
 //int	return_its_full(t_philo *philo);
-long	sleep_time();
+//long	sleep_time();
+
 //libft
 int	ft_atoi(const char *str);
 
