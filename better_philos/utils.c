@@ -11,7 +11,8 @@ void	init_time(t_philo *philo)
 	while (cur)
 	{
 		pthread_mutex_lock(&philo->data->time);
-		cur->last_meal = philo->data->start;
+		cur->last_meal = 0/* philo->data->start */;
+	//	printf("philo %d start: %ld\n", cur->philo, cur->data->start);
 		pthread_mutex_unlock(&philo->data->time);
 		if (cur->next == philo)
 			break ;

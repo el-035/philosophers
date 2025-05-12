@@ -98,7 +98,7 @@ int	start_threads(t_philo *philo, t_data *data)	//protect all join and create an
 	{
 		pthread_join(cur->thread_id, NULL);
 		if (cur->next == philo)
-		break ;
+			break ;
 		cur = cur->next;
 	}
 	return (0);
