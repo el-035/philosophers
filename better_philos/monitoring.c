@@ -4,7 +4,7 @@ void	*full_or_dead(void *arg)
 {
 	t_philo	*phil;
 	t_philo *cur;
-	long	cur_time;
+	long	meal;
 	int		full;
 
 	phil = (t_philo *) arg;
@@ -18,19 +18,23 @@ void	*full_or_dead(void *arg)
 		while (return_its_over(phil) == 0)
 		{
 			pthread_mutex_lock(&cur->data->time);
-			cur_time = return_time(cur);
+			meal = cur->last_meal;
+			pthread_mutex_unlock(&cur->data->time);
 
 
-			if ((cur_time - cur->last_meal) >= cur->t_die)
+			if ((return_time(cur) - meal) >= cur->t_die)
 			{
 				pthread_mutex_lock(&cur->data->init);
 				(cur->data->over) = 1;
 				pthread_mutex_unlock(&cur->data->init);
+				//usleep(500);
+				print(cur, DIE, return_time(cur));
 
-				printf("%ld %d died\n", cur_time, cur->philo);
-				return (pthread_mutex_unlock(&cur->data->time), NULL);
+				/* printf("%ld %d died\n", cur_time, cur->philo); */
+				return (NULL);
 			}
 
+			pthread_mutex_lock(&cur->data->time);
 			if (cur->meals_eaten < cur->n_meals)
 				full = 0;
 			pthread_mutex_unlock(&cur->data->time);

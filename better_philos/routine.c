@@ -26,34 +26,44 @@ void	better_usleep(long	time, t_philo *philo)
 
 void	lock(t_philo *phil)
 {
+	long	cur_time;
+
+	//usleep(500);
 	if (phil->philo % 2 == 0)
 	{
-		pthread_mutex_lock(&phil->right_fork);
 		pthread_mutex_lock(phil->left_fork);
+		pthread_mutex_lock(&phil->right_fork);
+		print(phil, FORK, return_time(phil));
+		print(phil, FORK, return_time(phil));
 	}
-	else
+	else if (phil->philo % 2 != 0)
 	{
-		pthread_mutex_lock(phil->left_fork);
 		pthread_mutex_lock(&phil->right_fork);
+		pthread_mutex_lock(phil->left_fork);
+		print(phil, FORK, return_time(phil));
+		print(phil, FORK, return_time(phil));
 	}
+	cur_time = return_time(phil);
+
+	pthread_mutex_lock(&phil->data->time);
+	phil->last_meal = cur_time;
+	pthread_mutex_unlock(&phil->data->time);
+
+	print(phil, EAT, return_time(phil));
 }
 
 void	eat(t_philo *phil)
 {
-	long	cur_time;
+	/* long	cur_time; */
 
-	lock(phil);
-/* 	if (return_its_over(phil) == 1)
-	{
-		pthread_mutex_unlock(phil->left_fork);
-		pthread_mutex_unlock(&phil->right_fork);
-		return ;
-	} */
-	pthread_mutex_lock(&phil->data->time);
+	if (return_its_over(phil) != 1)
+		lock(phil);
+
+	/* pthread_mutex_lock(&phil->data->time);
 	cur_time = return_time(phil);
 	phil->last_meal = cur_time;
 	pthread_mutex_unlock(&phil->data->time);
-	if (return_its_over(phil) == 1)
+	if (return_its_over(phil) != 1)
 	{
 		pthread_mutex_unlock(phil->left_fork);
 		pthread_mutex_unlock(&phil->right_fork);
@@ -63,12 +73,13 @@ void	eat(t_philo *phil)
 	printf("%ld %d has taken a fork\n", cur_time, phil->philo);
 	printf("%ld %d has taken a fork\n", cur_time, phil->philo);
 	printf("%ld %d is eating\n", cur_time, phil->philo);		
-	pthread_mutex_unlock(&phil->data->init);
-	//usleep(phil->t_eat * 1000);
+	pthread_mutex_unlock(&phil->data->init); */
+
 	better_usleep(phil->t_eat, phil);
 	
 	pthread_mutex_unlock(phil->left_fork);
 	pthread_mutex_unlock(&phil->right_fork);
+
 	pthread_mutex_lock(&phil->data->time);
 		phil->meals_eaten++;
 	pthread_mutex_unlock(&phil->data->time);
@@ -76,43 +87,41 @@ void	eat(t_philo *phil)
 
 void	nap(t_philo *phil)
 {
-	long	cur_time;
+	//long	cur_time;
 
-	pthread_mutex_lock(&phil->data->time);
+/* 	pthread_mutex_lock(&phil->data->time);
 	cur_time = return_time(phil);
-	pthread_mutex_unlock(&phil->data->time);
+	pthread_mutex_unlock(&phil->data->time); */
 	if (return_its_over(phil) == 1)
 		return ;
-	pthread_mutex_lock(&phil->data->init);
+	print(phil, SLEEP, return_time(phil));
+		/* pthread_mutex_lock(&phil->data->init);
 	printf("%ld %d is sleeping\n", cur_time, phil->philo);
-	pthread_mutex_unlock(&phil->data->init);
-//	usleep(phil->t_sleep * 1000);
+	pthread_mutex_unlock(&phil->data->init); */
 	better_usleep(phil->t_sleep, phil);
 
 }
 
 void	think(t_philo *phil)
 {
-	long cur_time;
-	long t_last_meal;
+	//long cur_time;
 
-	pthread_mutex_lock(&phil->data->time);
+
+/* 	pthread_mutex_lock(&phil->data->time);
 	cur_time = return_time(phil);
-	pthread_mutex_unlock(&phil->data->time);
+	pthread_mutex_unlock(&phil->data->time); */
 	if (return_its_over(phil) == 1)
 		return ;
-	pthread_mutex_lock(&phil->data->init);
+	/* pthread_mutex_lock(&phil->data->init);
 	printf("%ld %d is thinking\n", cur_time, phil->philo);
-	pthread_mutex_unlock(&phil->data->init);
+	pthread_mutex_unlock(&phil->data->init); */
+	print(phil, THINK, return_time(phil));
+
 	
 	if ((phil->n_phils % 2 != 0) && return_its_over(phil) != 1)
 	{
-		pthread_mutex_lock(&phil->data->time);
-		t_last_meal = return_time(phil) - phil->last_meal;
-		pthread_mutex_unlock(&phil->data->time);
 		if (phil->t_eat >= phil->t_sleep)
 			better_usleep((phil->t_eat - phil->t_sleep + 1), phil);
-			//usleep((phil->t_eat - phil->t_sleep + 1) * 1000);
 	}
 }
 

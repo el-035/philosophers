@@ -8,6 +8,12 @@
 # include <sys/time.h>
 # include <unistd.h>
 
+# define FORK 1
+# define EAT 2
+# define SLEEP 3
+# define THINK 4
+# define DIE 5
+
 typedef struct s_philo
 {
 	int			philo;
@@ -52,6 +58,7 @@ long	return_time(t_philo *philo);
 void	lock(t_philo *phil);
 int	return_its_over(t_philo *philo);
 void	init_time(t_philo *philo);
+void	print(t_philo *phil, int action, long time);
 //int	return_its_full(t_philo *philo);
 //long	sleep_time();
 

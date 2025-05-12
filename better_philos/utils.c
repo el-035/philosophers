@@ -11,8 +11,7 @@ void	init_time(t_philo *philo)
 	while (cur)
 	{
 		pthread_mutex_lock(&philo->data->time);
-		cur->last_meal = 0/* philo->data->start */;
-	//	printf("philo %d start: %ld\n", cur->philo, cur->data->start);
+		cur->last_meal = 0;
 		pthread_mutex_unlock(&philo->data->time);
 		if (cur->next == philo)
 			break ;
@@ -62,7 +61,9 @@ long	return_time(t_philo *philo)
 	long	res;
 	if (gettimeofday(&time, NULL) != 0)
 		return (0);
+	pthread_mutex_lock(&philo->data->time);
 	res = time.tv_sec * 1000 + time.tv_usec / 1000 - philo->data->start;
+	pthread_mutex_unlock(&philo->data->time);
 	return (res);
 }
 
@@ -74,4 +75,25 @@ int	return_its_over(t_philo *philo)
 	end = philo->data->over;
 	pthread_mutex_unlock(&philo->data->init);
 	return (end);
+}
+
+void	print(t_philo *phil, int action, long time)
+{
+	char 	*message;
+	
+	if (action == 1)
+		message = "has taken a fork";
+	else if (action == 2)
+		message = "is eating";
+	else if (action == 3)
+		message = "is sleeping";
+	else if (action == 4)
+		message = "is thinking";
+	else if (action == 5)
+		message = "died";
+	if (return_its_over(phil) == 1 && action != DIE)
+		return ;
+	pthread_mutex_lock(&phil->data->init);
+	printf("%ld %d %s\n", time, phil->philo, message);	
+	pthread_mutex_unlock(&phil->data->init);
 }
