@@ -45,13 +45,54 @@ t_data	*init_data(t_data *data)
 	return (data);
 }
 
+static void create_helper(t_philo **prev, t_philo **first, t_philo **cur)
+{
+	if (!*first)
+		*first = *cur;
+	else
+	{
+		(*prev)->next = *cur;
+		(*cur)->left_fork = &(*prev)->right_fork;
+	}
+	*prev = *cur;
+}
+
 t_philo	*create_philos(char **args, int tot, t_data *data)
 {
 	t_philo	*first;
 	t_philo	*cur;
 	t_philo	*prev;
-	int		i;
 
+	prev = NULL;
+	int		i;
+	i = 0;
+	first = NULL;
+	while (i < tot)
+	{
+		cur = (t_philo *) malloc(sizeof(t_philo));
+		if (!cur)
+			return (NULL);
+		if (init_philo(args, i++, &cur) != 0)
+			return (NULL);
+		cur->data = data;
+		create_helper(&prev, &first, &cur);
+	//	prev = cur;
+	}
+	if (prev)
+	{
+		prev->next = first;
+		first->left_fork = &prev->right_fork;
+	}
+	return (first);
+}
+
+/* t_philo	*create_philos(char **args, int tot, t_data *data)
+{
+	t_philo	*first;
+	t_philo	*cur;
+	t_philo	*prev;
+	int		i;
+	
 	i = 0;
 	first = NULL;
 	while (i < tot)
@@ -77,6 +118,24 @@ t_philo	*create_philos(char **args, int tot, t_data *data)
 		first->left_fork = &prev->right_fork;
 	}
 	return (first);
+} */
+
+int	join_threads(t_philo *philo)
+{
+	t_philo	*cur;
+
+	cur = philo;
+	if (pthread_join(philo->data->monitor_id, NULL) != 0)
+		return (-1);
+	while (cur)
+	{
+		if (pthread_join(cur->thread_id, NULL) != 0)
+			return (-1);
+		if (cur->next == philo)
+			break ;
+		cur = cur->next;
+	}
+	return (0);
 }
 
 int	start_threads(t_philo *philo, t_data *data)
@@ -98,18 +157,7 @@ int	start_threads(t_philo *philo, t_data *data)
 			break ;
 		cur = cur->next;
 	}
-	cur = philo;
-	if (pthread_join(philo->data->monitor_id, NULL) != 0)
-		return (-1);
-	while (cur)
-	{
-		if (pthread_join(cur->thread_id, NULL) != 0)
-			return (-1);
-		if (cur->next == philo)
-			break ;
-		cur = cur->next;
-	}
-	return (0);
+	return (join_threads(philo));
 }
 
 int main(int argc, char **argv)
@@ -128,7 +176,7 @@ int main(int argc, char **argv)
 		return (-1);
 	data = init_data(data);
 	if (!data)
-		return(free(data), -1);
+		return(free(data), printf("here\n"), -1);
 	philo = create_philos(argv, ft_atoi(argv[1]), data);
 	if (!philo)
 		return (destroy_everything(philo, data), -1);

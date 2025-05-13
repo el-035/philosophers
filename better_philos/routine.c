@@ -1,6 +1,6 @@
 #include"philo.h"
 
-/* long	sleep_time()
+long	sleep_time()
 {
 	struct timeval	time;
 
@@ -22,7 +22,7 @@ void	better_usleep(long	time, t_philo *philo)
 			return ;
 		usleep(500);
 	}
-} */
+}
 
 void	lock(t_philo *phil)
 {
@@ -31,15 +31,15 @@ void	lock(t_philo *phil)
 	if (phil->philo % 2 == 0)
 	{
 		pthread_mutex_lock(phil->left_fork);
-		pthread_mutex_lock(&phil->right_fork);
 		print(phil, FORK, return_time(phil));
+		pthread_mutex_lock(&phil->right_fork);
 		print(phil, FORK, return_time(phil));
 	}
 	else if (phil->philo % 2 != 0)
 	{
 		pthread_mutex_lock(&phil->right_fork);
-		pthread_mutex_lock(phil->left_fork);
 		print(phil, FORK, return_time(phil));
+		pthread_mutex_lock(phil->left_fork);
 		print(phil, FORK, return_time(phil));
 	}
 	cur_time = return_time(phil);
@@ -53,8 +53,8 @@ void	eat(t_philo *phil)
 {
 	if (return_its_over(phil) != 1)
 		lock(phil);
-	//better_usleep(phil->t_eat, phil);
-	usleep(phil->t_eat * 1000);
+	better_usleep(phil->t_eat, phil);
+	//usleep(phil->t_eat * 1000);
 	pthread_mutex_unlock(phil->left_fork);
 	pthread_mutex_unlock(&phil->right_fork);
 	pthread_mutex_lock(&phil->data->time);
@@ -67,8 +67,8 @@ void	nap(t_philo *phil)
 	if (return_its_over(phil) == 1)
 		return ;
 	print(phil, SLEEP, return_time(phil));
-//	better_usleep(phil->t_sleep, phil);
-	usleep(phil->t_sleep * 1000);
+	better_usleep(phil->t_sleep, phil);
+//	usleep(phil->t_sleep * 1000);
 }
 
 void	think(t_philo *phil)
@@ -79,8 +79,8 @@ void	think(t_philo *phil)
 	if ((phil->n_phils % 2 != 0) && return_its_over(phil) != 1)
 	{
 		if (phil->t_eat >= phil->t_sleep)
-			usleep((phil->t_eat - phil->t_sleep + 1) * 1000);
-		//	better_usleep((phil->t_eat - phil->t_sleep + 1), phil);
+			better_usleep((phil->t_eat - phil->t_sleep + 1), phil);
+		//	usleep((phil->t_eat - phil->t_sleep + 1) * 1000);
 	}
 }
 

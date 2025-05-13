@@ -7,6 +7,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
+#include <limits.h>
 
 # define FORK 1
 # define EAT 2
