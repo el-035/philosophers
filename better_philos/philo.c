@@ -18,7 +18,7 @@ int	check_input(char **args)
 	return (0);
 }
 
-void	init_philo(char **args, int i, t_philo **phil)
+int	init_philo(char **args, int i, t_philo **phil)
 {
 	memset(*phil, 0, sizeof(t_philo));
 	(*phil)->philo = i + 1;
@@ -30,14 +30,18 @@ void	init_philo(char **args, int i, t_philo **phil)
 		(*phil)->n_meals = ft_atoi(args[5]);
 	else
 		(*phil)->n_meals = -1;
-	pthread_mutex_init(&(*phil)->right_fork, NULL);		//protect?
+	if (pthread_mutex_init(&(*phil)->right_fork, NULL) != 0)
+		return (-1);
+	return (0);
 }
 
 t_data	*init_data(t_data *data)
 {
 	data->over = 0;
-	pthread_mutex_init(&data->time, NULL);
-	pthread_mutex_init(&data->init, NULL);
+	if (pthread_mutex_init(&data->time, NULL) != 0)
+		return (NULL);
+	if (pthread_mutex_init(&data->init, NULL) != 0)
+		return (NULL);
 	return (data);
 }
 
@@ -54,8 +58,9 @@ t_philo	*create_philos(char **args, int tot, t_data *data)
 	{
 		cur = (t_philo *) malloc(sizeof(t_philo));
 		if (!cur)
-			return (free_list(first), free(data), NULL);
-		init_philo(args, i++, &cur);
+			return (NULL);
+		if (init_philo(args, i++, &cur) != 0)
+			return (NULL);
 		cur->data = data;
 		if (!first)
 			first = cur;
@@ -71,32 +76,35 @@ t_philo	*create_philos(char **args, int tot, t_data *data)
 		prev->next = first;
 		first->left_fork = &prev->right_fork;
 	}
-
 	return (first);
 }
 
-int	start_threads(t_philo *philo, t_data *data)	//protect all join and create and stuff
+int	start_threads(t_philo *philo, t_data *data)
 {
 	t_philo	*cur;
 
 	cur = philo;
 	pthread_mutex_lock(&philo->data->init);
-	pthread_create(&data->monitor_id, NULL, full_or_dead, philo);
+	if (pthread_create(&data->monitor_id, NULL, full_or_dead, philo) != 0)
+		return (-1);
 	pthread_mutex_unlock(&philo->data->init);
 	while (cur)
 	{
 		pthread_mutex_lock(&cur->data->init);
-		pthread_create(&cur->thread_id, NULL, life_cycle, cur);
+		if (pthread_create(&cur->thread_id, NULL, life_cycle, cur) != 0)
+			return (-1);
 		pthread_mutex_unlock(&cur->data->init);
 		if (cur->next == philo)
 			break ;
 		cur = cur->next;
 	}
 	cur = philo;
-	pthread_join(philo->data->monitor_id, NULL);
+	if (pthread_join(philo->data->monitor_id, NULL) != 0)
+		return (-1);
 	while (cur)
 	{
-		pthread_join(cur->thread_id, NULL);
+		if (pthread_join(cur->thread_id, NULL) != 0)
+			return (-1);
 		if (cur->next == philo)
 			break ;
 		cur = cur->next;
@@ -119,9 +127,11 @@ int main(int argc, char **argv)
 	if (!data)
 		return (-1);
 	data = init_data(data);
+	if (!data)
+		return(free(data), -1);
 	philo = create_philos(argv, ft_atoi(argv[1]), data);
 	if (!philo)
-		return -1;
+		return (destroy_everything(philo, data), -1);
 	if (start_threads(philo, data) == -1)
 		return(destroy_everything(philo, data), -1);
 	destroy_everything(philo, data);
