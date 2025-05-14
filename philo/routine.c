@@ -1,28 +1,16 @@
-#include"philo.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   routine.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: efittant <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/14 14:33:50 by efittant          #+#    #+#             */
+/*   Updated: 2025/05/14 14:33:51 by efittant         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-long	sleep_time()
-{
-	struct timeval	time;
-
-	if (gettimeofday(&time, NULL) != 0)
-		return (0);
-	return (time.tv_sec * 1000 + time.tv_usec / 1000);
-}
-
-void	better_usleep(long	time, t_philo *philo)
-{
-	long	start_sleep;
-
-	start_sleep = sleep_time();
-	while (sleep_time() < (start_sleep + time))
-	{
-		if (sleep_time() >= (start_sleep + time))
-			return ;
-		if (return_its_over(philo) == 1)
-			return ;
-		usleep(500);
-	}
-}
+#include "philo.h"
 
 void	lock(t_philo *phil)
 {
@@ -54,11 +42,10 @@ void	eat(t_philo *phil)
 	if (return_its_over(phil) != 1)
 		lock(phil);
 	better_usleep(phil->t_eat, phil);
-	//usleep(phil->t_eat * 1000);
 	pthread_mutex_unlock(phil->left_fork);
 	pthread_mutex_unlock(&phil->right_fork);
 	pthread_mutex_lock(&phil->data->time);
-		phil->meals_eaten++;
+	phil->meals_eaten++;
 	pthread_mutex_unlock(&phil->data->time);
 }
 
@@ -68,7 +55,6 @@ void	nap(t_philo *phil)
 		return ;
 	print(phil, SLEEP, return_time(phil));
 	better_usleep(phil->t_sleep, phil);
-//	usleep(phil->t_sleep * 1000);
 }
 
 void	think(t_philo *phil)
@@ -80,7 +66,6 @@ void	think(t_philo *phil)
 	{
 		if (phil->t_eat >= phil->t_sleep)
 			better_usleep((phil->t_eat - phil->t_sleep + 1), phil);
-		//	usleep((phil->t_eat - phil->t_sleep + 1) * 1000);
 	}
 }
 
@@ -88,10 +73,10 @@ void	*life_cycle(void *arg)
 {
 	t_philo	*phil;
 
-	phil = (t_philo *) arg;
+	phil = (t_philo *)arg;
 	while (is_ready(phil) == 1)
 		;
-	if(phil->philo % 2 == 0)
+	if (phil->philo % 2 == 0)
 		usleep(phil->t_eat * 1000 / 2);
 	while (return_its_over(phil) != 1)
 	{
@@ -99,7 +84,7 @@ void	*life_cycle(void *arg)
 		nap(phil);
 		think(phil);
 		if (return_its_over(phil) == 1)
-			return (NULL);	
+			return (NULL);
 	}
 	return (NULL);
 }

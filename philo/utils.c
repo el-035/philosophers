@@ -1,8 +1,20 @@
-#include"philo.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: efittant <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/14 14:33:57 by efittant          #+#    #+#             */
+/*   Updated: 2025/05/14 14:33:59 by efittant         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
 
 void	init_time(t_philo *philo)
 {
-	t_philo *cur;
+	t_philo	*cur;
 
 	pthread_mutex_lock(&philo->data->time);
 	start_time(philo->data);
@@ -21,14 +33,14 @@ void	init_time(t_philo *philo)
 
 int	is_ready(t_philo *first)
 {
-	t_philo *cur;
+	t_philo	*cur;
 
 	cur = first;
 	pthread_mutex_lock(&first->data->init);
 	if (!first->data->monitor_id)
 		return (pthread_mutex_unlock(&first->data->init), 1);
 	pthread_mutex_unlock(&first->data->init);
-	while(1)
+	while (1)
 	{
 		pthread_mutex_lock(&cur->data->init);
 		if (!cur->thread_id)
@@ -39,26 +51,25 @@ int	is_ready(t_philo *first)
 			break ;
 	}
 	init_time(first);
-	return 0;
+	return (0);
 }
 
 void	start_time(t_data *data)
 {
 	struct timeval	time;
-	long	start;
+	long			start;
 
 	if (gettimeofday(&time, NULL) != 0)
 		return ;
 	start = time.tv_sec * 1000 + time.tv_usec / 1000;
 	data->start = start;
-
 }
 
 long	return_time(t_philo *philo)
 {
 	struct timeval	time;
+	long			res;
 
-	long	res;
 	if (gettimeofday(&time, NULL) != 0)
 		return (0);
 	pthread_mutex_lock(&philo->data->time);
@@ -75,25 +86,4 @@ int	return_its_over(t_philo *philo)
 	end = philo->data->over;
 	pthread_mutex_unlock(&philo->data->init);
 	return (end);
-}
-
-void	print(t_philo *phil, int action, long time)
-{
-	char 	*message;
-	
-	if (action == 1)
-		message = "has taken a fork";
-	else if (action == 2)
-		message = "is eating";
-	else if (action == 3)
-		message = "is sleeping";
-	else if (action == 4)
-		message = "is thinking";
-	else if (action == 5)
-		message = "died";
-	if (return_its_over(phil) == 1 && action != DIE)
-		return ;
-	pthread_mutex_lock(&phil->data->init);
-	printf("%ld %d %s\n", time, phil->philo, message);	
-	pthread_mutex_unlock(&phil->data->init);
 }
