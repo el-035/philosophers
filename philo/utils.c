@@ -34,11 +34,14 @@ void	init_time(t_philo *philo)
 int	is_ready(t_philo *first)
 {
 	t_philo	*cur;
+	int		check;
 
 	cur = first;
 	pthread_mutex_lock(&first->data->init);
 	if (!first->data->monitor_id)
 		return (pthread_mutex_unlock(&first->data->init), 1);
+	if (first->data->threads != cur->data->philos)
+		return (pthread_mutex_unlock(&first->data->init), 0);
 	pthread_mutex_unlock(&first->data->init);
 	while (1)
 	{

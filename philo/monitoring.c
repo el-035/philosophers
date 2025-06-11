@@ -65,6 +65,10 @@ void	*full_or_dead(void *arg)
 	phil = (t_philo *)arg;
 	while (is_ready(phil) == 1)
 		;
+	pthread_mutex_lock(&phil->data->init);
+	if (phil->data->philos != phil->data->threads)
+		return (pthread_mutex_unlock(&phil->data->init), NULL);
+	pthread_mutex_unlock(&phil->data->init);
 	while (return_its_over(phil) == 0)
 	{
 		if (death_check(phil) == 1)

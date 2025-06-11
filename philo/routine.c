@@ -76,6 +76,10 @@ void	*life_cycle(void *arg)
 	phil = (t_philo *)arg;
 	while (is_ready(phil) == 1)
 		;
+	pthread_mutex_lock(&phil->data->init);
+	if (phil->data->philos != phil->data->threads)
+		return (pthread_mutex_unlock(&phil->data->init), NULL);
+	pthread_mutex_unlock(&phil->data->init);
 	if (phil->philo % 2 == 0)
 		usleep(phil->t_eat * 1000 / 2);
 	while (return_its_over(phil) != 1)
@@ -83,8 +87,8 @@ void	*life_cycle(void *arg)
 		eat(phil);
 		nap(phil);
 		think(phil);
-		if (return_its_over(phil) == 1)
-			return (NULL);
+		/* if (return_its_over(phil) == 1)
+			return (NULL); */
 	}
 	return (NULL);
 }

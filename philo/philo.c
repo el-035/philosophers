@@ -40,7 +40,7 @@ t_philo	*create_philos(char **args, int tot, t_data *data)
 		if (!cur)
 			return (NULL);
 		if (init_philo(args, i++, &cur) != 0)
-			return (NULL);
+			return (free(cur), free_list(first), first = NULL, NULL);
 		cur->data = data;
 		create_helper(&prev, &first, &cur);
 	}
@@ -52,14 +52,14 @@ t_philo	*create_philos(char **args, int tot, t_data *data)
 	return (first);
 }
 
-int	join_threads(t_philo *philo)
+int	join_threads(t_philo *philo, int i)
 {
 	t_philo	*cur;
 
 	cur = philo;
 	if (pthread_join(philo->data->monitor_id, NULL) != 0)
 		return (-1);
-	while (cur)
+	while (i-- >= 0)
 	{
 		if (pthread_join(cur->thread_id, NULL) != 0)
 			return (-1);
@@ -73,23 +73,30 @@ int	join_threads(t_philo *philo)
 int	start_threads(t_philo *philo, t_data *data)
 {
 	t_philo	*cur;
+	int		i;
 
 	cur = philo;
 	pthread_mutex_lock(&philo->data->init);
 	if (pthread_create(&data->monitor_id, NULL, full_or_dead, philo) != 0)
-		return (-1);
+		return (pthread_mutex_unlock(&philo->data->init), -1);
 	pthread_mutex_unlock(&philo->data->init);
+	i = 0;
 	while (cur)
 	{
 		pthread_mutex_lock(&cur->data->init);
 		if (pthread_create(&cur->thread_id, NULL, life_cycle, cur) != 0)
-			return (-1);
+		{
+			pthread_mutex_unlock(&cur->data->init);
+			break ;
+		}
+		cur->data->threads++;
 		pthread_mutex_unlock(&cur->data->init);
 		if (cur->next == philo)
 			break ;
 		cur = cur->next;
+		i++;
 	}
-	return (join_threads(philo));
+	return (join_threads(philo, i));
 }
 
 int	main(int argc, char **argv)
@@ -106,9 +113,8 @@ int	main(int argc, char **argv)
 	data = (t_data *)malloc(sizeof(t_data));
 	if (!data)
 		return (-1);
-	data = init_data(data);
-	if (!data)
-		return (free(data), printf("here\n"), -1);
+	if (init_data(data, ft_atoi(argv[1])) == -1)
+		return (free(data), -1);
 	philo = create_philos(argv, ft_atoi(argv[1]), data);
 	if (!philo)
 		return (destroy_everything(philo, data), -1);

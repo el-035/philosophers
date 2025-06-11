@@ -47,14 +47,19 @@ int	init_philo(char **args, int i, t_philo **phil)
 	return (0);
 }
 
-t_data	*init_data(t_data *data)
+int	init_data(t_data *data, int philo)
 {
 	data->over = 0;
+	data->threads = 0;
+	data->philos = philo;
 	if (pthread_mutex_init(&data->time, NULL) != 0)
-		return (NULL);
+		return (-1);
 	if (pthread_mutex_init(&data->init, NULL) != 0)
-		return (NULL);
-	return (data);
+	{
+		pthread_mutex_destroy(&data->time);
+		return (-1);
+	}
+	return (0);
 }
 
 void	destroy_everything(t_philo *philo, t_data *data)
