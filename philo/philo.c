@@ -86,10 +86,10 @@ int	start_threads(t_philo *philo, t_data *data)
 		pthread_mutex_lock(&cur->data->init);
 		if (pthread_create(&cur->thread_id, NULL, life_cycle, cur) != 0)
 		{
+			return_create_failed(1);
 			pthread_mutex_unlock(&cur->data->init);
 			break ;
 		}
-		cur->data->threads++;
 		pthread_mutex_unlock(&cur->data->init);
 		if (cur->next == philo)
 			break ;
@@ -113,7 +113,7 @@ int	main(int argc, char **argv)
 	data = (t_data *)malloc(sizeof(t_data));
 	if (!data)
 		return (-1);
-	if (init_data(data, ft_atoi(argv[1])) == -1)
+	if (init_data(data) == -1)
 		return (free(data), -1);
 	philo = create_philos(argv, ft_atoi(argv[1]), data);
 	if (!philo)

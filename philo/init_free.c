@@ -47,11 +47,9 @@ int	init_philo(char **args, int i, t_philo **phil)
 	return (0);
 }
 
-int	init_data(t_data *data, int philo)
+int	init_data(t_data *data)
 {
 	data->over = 0;
-	data->threads = 0;
-	data->philos = philo;
 	if (pthread_mutex_init(&data->time, NULL) != 0)
 		return (-1);
 	if (pthread_mutex_init(&data->init, NULL) != 0)

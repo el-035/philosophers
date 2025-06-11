@@ -60,3 +60,12 @@ void	better_usleep(long time, t_philo *philo)
 		usleep(500);
 	}
 }
+
+int	return_create_failed(int i)
+{
+	static int	failed = 0;
+
+	if (i == 1)
+		failed = 1;
+	return (failed);
+}

@@ -51,8 +51,6 @@ typedef struct s_data
 	pthread_mutex_t	time;
 	long			start;
 	int				over;
-	int				threads;
-	int				philos;
 }					t_data;
 
 // main
@@ -61,6 +59,7 @@ int					join_threads(t_philo *philo, int i);
 t_philo				*create_philos(char **args, int tot, t_data *data);
 void				create_helper(t_philo **prev, t_philo **first,
 						t_philo **cur);
+int					return_create_failed(int i);
 
 // solo
 int					lonely_philo(char **args);
@@ -94,7 +93,7 @@ void				better_usleep(long time, t_philo *philo);
 // free
 int					check_input(char **args);
 int					init_philo(char **args, int i, t_philo **phil);
-int					init_data(t_data *data, int philo);
+int					init_data(t_data *data);
 void				free_list(t_philo *phil);
 void				destroy_everything(t_philo *philo, t_data *data);
 
