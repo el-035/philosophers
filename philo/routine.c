@@ -77,7 +77,7 @@ void	*life_cycle(void *arg)
 	while (is_ready(phil) == 1)
 		;
 	pthread_mutex_lock(&phil->data->init);
-	if (return_create_failed(0) == 1)
+	if (create_failed(0) == 1)
 		return (pthread_mutex_unlock(&phil->data->init), NULL);
 	pthread_mutex_unlock(&phil->data->init);
 	if (phil->philo % 2 == 0)

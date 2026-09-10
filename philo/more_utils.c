@@ -12,29 +12,39 @@
 
 #include "philo.h"
 
-int	ft_atoi(const char *str)
+int	str_dig(char *c)
 {
 	int	i;
-	int	result;
 
 	i = 0;
-	result = 0;
-	while (str[i] == 32 || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
+	while (c[i])
 	{
-		if (str[i] == '-')
+		if (c[i] < 48 || c[i] > 57)
 			return (-1);
 		i++;
 	}
+	return (0);
+}
+
+int	ft_atoi(char *str)
+{
+	int			i;
+	long long	result;
+
+	i = 0;
+	result = 0;
+	if (str[i] == '+')
+		i++;
+	if (str_dig(&str[i]) == -1)
+		return (-1);
 	if (str[i])
 	{
 		while (str[i] >= 48 && str[i] <= 57)
 			result = result * 10 + str[i++] - 48;
 	}
-	if (result == 0)
+	if (result == 0 || result > 2147483647)
 		return (-1);
-	return (result);
+	return ((int)result);
 }
 
 long	sleep_time(void)
@@ -61,7 +71,7 @@ void	better_usleep(long time, t_philo *philo)
 	}
 }
 
-int	return_create_failed(int i)
+int	create_failed(int i)
 {
 	static int	failed = 0;
 

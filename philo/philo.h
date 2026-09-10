@@ -59,7 +59,7 @@ int					join_threads(t_philo *philo, int i);
 t_philo				*create_philos(char **args, int tot, t_data *data);
 void				create_helper(t_philo **prev, t_philo **first,
 						t_philo **cur);
-int					return_create_failed(int i);
+int					create_failed(int i);
 
 // solo
 int					lonely_philo(char **args);
@@ -86,7 +86,7 @@ long				return_time(t_philo *philo);
 int					return_its_over(t_philo *philo);
 
 // more_utils
-int					ft_atoi(const char *str);
+int					ft_atoi(char *str);
 long				sleep_time(void);
 void				better_usleep(long time, t_philo *philo);
 

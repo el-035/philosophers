@@ -38,7 +38,7 @@ int	is_ready(t_philo *first)
 
 	cur = first;
 	pthread_mutex_lock(&first->data->init);
-	if (return_create_failed(0) == 1)
+	if (create_failed(0) == 1)
 		return (pthread_mutex_unlock(&first->data->init), 0);
 	if (!first->data->monitor_id)
 		return (pthread_mutex_unlock(&first->data->init), 1);

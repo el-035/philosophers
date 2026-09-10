@@ -58,11 +58,21 @@ int	join_threads(t_philo *philo, int i)
 
 	cur = philo;
 	if (pthread_join(philo->data->monitor_id, NULL) != 0)
-		return (-1);
+	{
+		pthread_mutex_lock(&philo->data->init);
+		create_failed(1);
+		pthread_mutex_unlock(&philo->data->init);
+		pthread_detach(philo->data->monitor_id);
+	}
 	while (i-- >= 0)
 	{
 		if (pthread_join(cur->thread_id, NULL) != 0)
-			return (-1);
+		{
+			pthread_mutex_lock(&philo->data->init);
+			create_failed(1);
+			pthread_mutex_unlock(&philo->data->init);
+			pthread_detach(cur->thread_id);
+		}
 		if (cur->next == philo)
 			break ;
 		cur = cur->next;
@@ -78,7 +88,7 @@ int	start_threads(t_philo *philo, t_data *data)
 	cur = philo;
 	pthread_mutex_lock(&philo->data->init);
 	if (pthread_create(&data->monitor_id, NULL, full_or_dead, philo) != 0)
-		return (pthread_mutex_unlock(&philo->data->init), -1);
+		return (create_failed(1), pthread_mutex_unlock(&philo->data->init), -1);
 	pthread_mutex_unlock(&philo->data->init);
 	i = 0;
 	while (cur)
@@ -86,7 +96,7 @@ int	start_threads(t_philo *philo, t_data *data)
 		pthread_mutex_lock(&cur->data->init);
 		if (pthread_create(&cur->thread_id, NULL, life_cycle, cur) != 0)
 		{
-			return_create_failed(1);
+			create_failed(1);
 			pthread_mutex_unlock(&cur->data->init);
 			break ;
 		}
